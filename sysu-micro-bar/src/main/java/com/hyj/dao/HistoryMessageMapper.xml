@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hyj.dao.HistoryMessageMapper" >
+  <resultMap id="BaseResultMap" type="com.hyj.entity.HistoryMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="account_id" property="accountId" jdbcType="INTEGER" />
+    <result column="floor_id" property="floorId" jdbcType="INTEGER" />
+    <result column="is_checked" property="isChecked" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, account_id, floor_id, is_checked
+  </sql>
+  <select id="selectCountByNotChecked" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select count(*)
+    from history_message
+    where account_id = #{accountId,jdbcType=INTEGER} and is_checked = false
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from history_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from history_message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.hyj.entity.HistoryMessage" >
+    insert into history_message (id, account_id, floor_id, 
+      is_checked)
+    values (#{id,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, #{floorId,jdbcType=INTEGER}, 
+      #{isChecked,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hyj.entity.HistoryMessage" >
+    insert into history_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="accountId != null" >
+        account_id,
+      </if>
+      <if test="floorId != null" >
+        floor_id,
+      </if>
+      <if test="isChecked != null" >
+        is_checked,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null" >
+        #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="floorId != null" >
+        #{floorId,jdbcType=INTEGER},
+      </if>
+      <if test="isChecked != null" >
+        #{isChecked,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hyj.entity.HistoryMessage" >
+    update history_message
+    <set >
+      <if test="accountId != null" >
+        account_id = #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="floorId != null" >
+        floor_id = #{floorId,jdbcType=INTEGER},
+      </if>
+      <if test="isChecked != null" >
+        is_checked = #{isChecked,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hyj.entity.HistoryMessage" >
+    update history_message
+    set account_id = #{accountId,jdbcType=INTEGER},
+      floor_id = #{floorId,jdbcType=INTEGER},
+      is_checked = #{isChecked,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
