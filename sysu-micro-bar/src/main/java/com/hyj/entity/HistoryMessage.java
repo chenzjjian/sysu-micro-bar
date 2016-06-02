@@ -3,18 +3,18 @@ package com.hyj.entity;
 public class HistoryMessage {
     private Integer id;
 
-    private Integer accountId;
+    private Account account;
 
-    private Integer floorId;
+    private Floor floor;
 
     private Boolean isChecked;
 
     public HistoryMessage() {
     }
 
-    public HistoryMessage(Integer accountId, Integer floorId, Boolean isChecked) {
-        this.accountId = accountId;
-        this.floorId = floorId;
+    public HistoryMessage(Account account, Floor floor, Boolean isChecked) {
+        this.account = account;
+        this.floor = floor;
         this.isChecked = isChecked;
     }
 
@@ -26,20 +26,20 @@ public class HistoryMessage {
         this.id = id;
     }
 
-    public Integer getAccountId() {
-        return accountId;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setAccountId(Integer accountId) {
-        this.accountId = accountId;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
-    public Integer getFloorId() {
-        return floorId;
+    public Floor getFloor() {
+        return floor;
     }
 
-    public void setFloorId(Integer floorId) {
-        this.floorId = floorId;
+    public void setFloor(Floor floor) {
+        this.floor = floor;
     }
 
     public Boolean getIsChecked() {

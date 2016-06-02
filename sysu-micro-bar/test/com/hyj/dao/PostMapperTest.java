@@ -1,6 +1,7 @@
 package com.hyj.dao;
 
 import com.alibaba.fastjson.JSON;
+import com.hyj.entity.Post;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -16,6 +17,8 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-mybatis.xml"})
 public class PostMapperTest {
+
+
     private static final Logger logger = LoggerFactory
             .getLogger(PostMapperTest.class);
 
@@ -28,6 +31,12 @@ public class PostMapperTest {
     @Test
     public void selectAllPost() throws Exception {
         logger.info(JSON.toJSONString(postMapper.selectAllPost()));
+        for (Post post : postMapper.selectAllPost()) {
+            logger.info(JSON.toJSONString(post.getCreator()));
+        }
     }
-
+    @Test
+    public void searchByTitleAndTag() throws Exception {
+        logger.info(JSON.toJSONString(postMapper.searchByTitleAndTag(null, 1)));
+    }
 }

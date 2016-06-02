@@ -55,8 +55,18 @@ public class PostServiceImpl implements PostService {
         return postDatas;
     }
 
-    public boolean createReply(int accountId, int postId, String detail, MultipartFile[] files, String rootPath, String contextPath) {
-        return false;
+
+
+    public List<PostData> searchPostData(String title, int tag) {
+        List<Post> posts = postMapper.searchByTitleAndTag(title, tag);
+        List<PostData> postDatas = new ArrayList<PostData>();
+        for (Post post : posts) {
+            PostData postData = new PostData(post.getId(),
+                    post.getTitle(), Constants.POST_TAGS[post.getTag()],
+                    DateTimeUtil.getDateTimeString(new Date()), floorMapper.selectCountByPostId(post.getId()));
+            postDatas.add(postData);
+        }
+        return postDatas;
     }
 
 
@@ -111,7 +121,7 @@ public class PostServiceImpl implements PostService {
             Matcher matcher = pattern.matcher(content);
             int count = 0;
             while (matcher.find()) {
-                content.replace(matcher.group(), "<img src=\"" + fileUrls[count++] + "\"</img>");
+                content.replace(matcher.group(), "\n<img src=\"" + fileUrls[count++] + "\"</img>");
             }
             floor.setDetail(content);
             floorMapper.updateByPrimaryKeySelective(floor);
@@ -119,9 +129,10 @@ public class PostServiceImpl implements PostService {
     }
 
     public boolean createPost(int accountId, String title, int tag, String detail, MultipartFile[] files, String rootPath, String contextPath) {
-        Post post = new Post(accountId, title, tag, new Date(), new Date());
+        Account account = accountMapper.selectByPrimaryKey(accountId);
+        Post post = new Post(account, title, tag, new Date(), new Date());
         postMapper.insertSelective(post);
-        Floor floor = new Floor(post.getId(), accountId, null, false, new Date(), detail);
+        Floor floor = new Floor(post, account, null, false, new Date(), detail);
         floorMapper.insertSelective(floor);
         String dirName = rootPath + File.separator + "post" + post.getId() + File.separator + "floor" + floor.getId();
         String fileBaseUrl = contextPath + File.separator + "post" + post.getId() + File.separator + "floor" + floor.getId() + File.separator;
@@ -131,42 +142,46 @@ public class PostServiceImpl implements PostService {
     }
 
     public boolean createFloor(int accountId, int postId, String detail, MultipartFile[] files, String rootPath, String contextPath) {
-        Floor floor = new Floor(postId, accountId, null, false, new Date(), detail);
+        Account account = accountMapper.selectByPrimaryKey(accountId);
+        Post post = postMapper.selectByPrimaryKey(postId);
+        Floor floor = new Floor(post, account, null, false, new Date(), detail);
         floorMapper.insertSelective(floor);
         String dirName = rootPath + File.separator + "post" + postId + File.separator + "floor" + floor.getId();
         String fileBaseUrl = contextPath + File.separator + "post" + postId + File.separator + "floor" + floor.getId() + File.separator;
         String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
         afterUploadFiles(fileUrls, detail, floor);
-        Post post = postMapper.selectByPrimaryKey(postId);
-        HistoryMessage historyMessage = new HistoryMessage(post.getCreatorId(), floor.getId(), false);
+        HistoryMessage historyMessage = new HistoryMessage(post.getCreator(), floor, false);
         historyMessageMapper.insertSelective(historyMessage);
         return true;
     }
 
     public boolean createReply(int accountId, int postId, int replyFloorId, String detail, MultipartFile[] files, String rootPath, String contextPath) {
-        Floor floor = new Floor(postId, accountId, replyFloorId, true, new Date(), detail);
+        Account account = accountMapper.selectByPrimaryKey(accountId);
+        Post post = postMapper.selectByPrimaryKey(postId);
+        Floor replyFloor = floorMapper.selectByPrimaryKey(replyFloorId);
+        Floor floor = new Floor(post, account, replyFloor, true, new Date(), detail);
         floorMapper.insertSelective(floor);
         String dirName = rootPath + File.separator + "post" + postId + File.separator + "floor" + floor.getId();
         String fileBaseUrl = contextPath + File.separator + "post" + postId + File.separator + "floor" + floor.getId() + File.separator;
         String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
         afterUploadFiles(fileUrls, detail, floor);
-        Post post = postMapper.selectByPrimaryKey(postId);
-        HistoryMessage historyMessage = new HistoryMessage(post.getCreatorId(), floor.getId(), false);
+        HistoryMessage historyMessage = new HistoryMessage(post.getCreator(), floor, false);
         historyMessageMapper.insertSelective(historyMessage);
         return true;
     }
 
 
     public boolean hasNewMessage(int accountId) {
-        return historyMessageMapper.selectCountByNotChecked(accountId) > 0;
+        boolean result = historyMessageMapper.selectCountByNotChecked(accountId) > 0;
+        return result;
     }
 
     public List<ReplyData> getReplyDataByAccountId(int accountId) {
         List<Floor> floors = floorMapper.selectByReply(accountId);
         List<ReplyData> replyDatas = new ArrayList<ReplyData>();
         for (Floor floor : floors) {
-            Post post = postMapper.selectByPrimaryKey(floor.getPostId());
-            Account account = accountMapper.selectByPrimaryKey(floor.getAccountId());
+            Post post = floor.getPost();
+            Account account = floor.getAccount();
             ReplyData replyData = new ReplyData(post.getId(), post.getTitle(), account.getNickname(), DateTimeUtil.getDateTimeString(floor.getCreateTime()));
             replyDatas.add(replyData);
         }
@@ -178,12 +193,14 @@ public class PostServiceImpl implements PostService {
         List<FloorData> floorDatas = new ArrayList<FloorData>();
         for (Floor floor : floors) {
             /*楼层id--->账号*/
-            Account account = accountMapper.selectByPrimaryKey(floor.getId());
+            Account account = floor.getAccount();
             /*如果有回复，就增加replyAccount= =有可能空指针错误需要注意*/
-            Account replyAccount = accountMapper.selectByPrimaryKey(floorMapper.selectByPrimaryKey(floor.getReplyFloorId()).getAccountId());
-            FloorData floorData = new FloorData(account.getHeadImageUrl(), account.getNickname(),
+            boolean isReply = floor.getIsReply();
+            Floor replyFloor = floor.getReplyFloor();
+            Account replyAccount = isReply ? replyFloor.getAccount() : null;
+            FloorData floorData = new FloorData(floor.getId(), account.getHeadImageUrl(), account.getNickname(),
                     DateTimeUtil.getDateTimeString(floor.getCreateTime()), floor.getDetail(),
-                    floor.getIsReply(), replyAccount.getNickname());
+                    isReply, isReply ? replyAccount.getNickname() : null, replyFloor.getId());
             floorDatas.add(floorData);
         }
         return floorDatas;

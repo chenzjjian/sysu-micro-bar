@@ -4,11 +4,12 @@
   <!-- 为了返回List类型而定义的resultMap -->
   <resultMap id="BaseResultMap" type="com.hyj.entity.Post" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="creator_id" property="creatorId" jdbcType="INTEGER" />
+    <!--<result column="creator_id" property="creatorId" jdbcType="INTEGER" />-->
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="tag" property="tag" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <association property="creator" column="creator_id" select="com.hyj.dao.AccountMapper.selectByPrimaryKey"/>
   </resultMap>
   <sql id="Base_Column_List" >
     id, creator_id, title, tag, create_time, modify_time
@@ -40,6 +41,23 @@
       #{tag,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
       )
   </insert>
+  <select id="searchByTitleAndTag" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from post
+    <!--where title like concat(concat('%', #{0}), '%') and tag = #{1} -->
+    <!-- “where”标签会知道如果它包含的标签中有返回值的话，它就插入一个‘where’。
+    此外，如果标签返回的内容是以AND 或OR 开头的，则它会剔除掉。-->
+    <where>
+      <if test="title != null">
+        title like concat(concat('%', #{title, jdbcType=VARCHAR}), '%')
+      </if>
+      <if test="tag != null">
+        and tag = #{tag, jdbcType=INTEGER}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
   <insert id="insertSelective" parameterType="com.hyj.entity.Post" >
     insert into post
     <trim prefix="(" suffix=")" suffixOverrides="," >

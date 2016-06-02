@@ -18,16 +18,25 @@ public interface PostService {
     public List<PostData> getPostDataList();
 
     /**
+     * 根据标题关键字和标签进行搜索
+     * @param title
+     * @param tag
+     * @return
+     */
+    public List<PostData> searchPostData(String title, int tag);
+
+    /**
      *  回复
      * @param accountId
      * @param postId
+     * @param replyFloorId
      * @param detail
      * @param files
      * @param rootPath
      * @param contextPath
      * @return
      */
-    public boolean createReply(int accountId, int postId, String detail, MultipartFile[] files, String rootPath, String contextPath);
+    public boolean createReply(int accountId, int postId, int replyFloorId, String detail, MultipartFile[] files, String rootPath, String contextPath);
 
     /**
      * 盖楼

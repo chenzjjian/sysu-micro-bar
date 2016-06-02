@@ -4,22 +4,42 @@ package com.hyj.dto;
  * Created by Administrator on 2016/5/26 0026.
  */
 public class FloorData {
+    int floorId;
     String headImageUrl;
     String nickname;
     String createTime;
     String detail;
     boolean isReply;
     String replyWho;
+    int replyFloorId;
 
     public FloorData() {}
 
-    public FloorData(String headImageUrl, String nickname, String createTime, String detail, boolean isReply, String replyWho) {
+    public FloorData(int floorId, String headImageUrl, String nickname, String createTime, String detail, boolean isReply, String replyWho, int replyFloorId) {
+        this.floorId = floorId;
         this.headImageUrl = headImageUrl;
         this.nickname = nickname;
         this.createTime = createTime;
         this.detail = detail;
         this.isReply = isReply;
         this.replyWho = replyWho;
+        this.replyFloorId = replyFloorId;
+    }
+
+    public int getFloorId() {
+        return floorId;
+    }
+
+    public void setFloorId(int floorId) {
+        this.floorId = floorId;
+    }
+
+    public int getReplyFloorId() {
+        return replyFloorId;
+    }
+
+    public void setReplyFloorId(int replyFloorId) {
+        this.replyFloorId = replyFloorId;
     }
 
     public String getHeadImageUrl() {
@@ -69,4 +89,5 @@ public class FloorData {
     public void setReplyWho(String replyWho) {
         this.replyWho = replyWho;
     }
+
 }

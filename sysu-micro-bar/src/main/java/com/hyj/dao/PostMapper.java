@@ -1,6 +1,7 @@
 package com.hyj.dao;
 
 import com.hyj.entity.Post;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,7 +17,9 @@ public interface PostMapper {
     int updateByPrimaryKeySelective(Post record);
 
     int updateByPrimaryKey(Post record);
-    List<Post> searchByTitleAndTag(String title, int tag);
+
+    List<Post> searchByTitleAndTag(@Param("title") String title, @Param("tag") Integer tag);
+
     List<Post> selectAllPost();
 
 

@@ -3,12 +3,15 @@
 <mapper namespace="com.hyj.dao.FloorMapper" >
   <resultMap id="BaseResultMap" type="com.hyj.entity.Floor" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="post_id" property="postId" jdbcType="INTEGER" />
-    <result column="account_id" property="accountId" jdbcType="INTEGER" />
-    <result column="reply_floor_id" property="replyFloorId" jdbcType="INTEGER" />
+    <!--    <result column="post_id" property="postId" jdbcType="INTEGER" />
+      <result column="account_id" property="accountId" jdbcType="INTEGER" />
+       <result column="reply_floor_id" property="replyFloorId" jdbcType="INTEGER" />-->
     <result column="is_reply" property="isReply" jdbcType="BIT" />
     <result column="level_num" property="levelNum" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <association property="post" column="post_id" select="com.hyj.dao.PostMapper.selectByPrimaryKey" />
+    <association property="account" column="account_id" select="com.hyj.dao.AccountMapper.selectByPrimaryKey"/>
+    <association property="replyFloor" column="reply_floor_id" select="com.hyj.dao.FloorMapper.selectByPrimaryKey"/>
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.hyj.entity.Floor" extends="BaseResultMap" >
     <result column="detail" property="detail" jdbcType="LONGVARCHAR" />
@@ -37,7 +40,7 @@
     <include refid="Blob_Column_List" />
     from floor
     where post_id = #{postId,jdbcType=INTEGER}
-    order by id
+    order by create_time desc
   </select>
   <select id="selectCountByPostId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select count(*)

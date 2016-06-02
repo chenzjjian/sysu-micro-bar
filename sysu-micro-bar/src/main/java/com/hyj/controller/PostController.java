@@ -26,11 +26,24 @@ public class PostController {
     @Resource
     private PostService postService;
 
-    @RequestMapping(value = "/mainPage", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/getPostList", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public String getPostData() {
         logger.info(JSON.toJSONString(postService.getPostDataList()));
         return JSON.toJSONString(postService.getPostDataList());
+    }
+    @RequestMapping(value = "/searchPostList", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public String searchPostList(@RequestParam("title") String title, @RequestParam("tag") int tag) {
+        logger.info(JSON.toJSONString(postService.searchPostData(title, tag)));
+        return JSON.toJSONString(postService.searchPostData(title, tag));
+    }
+
+    @RequestMapping(value = "/seePostDetail", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public String seePost(@RequestParam("postId") int postId) {
+        logger.info(JSON.toJSONString(postService.getAllFloorDatas(postId)));
+        return JSON.toJSONString(postService.getAllFloorDatas(postId));
     }
 
     @RequestMapping(value = "/createPost", method = RequestMethod.POST, produces = "application/json")
@@ -51,17 +64,45 @@ public class PostController {
         return JSON.toJSONString(postService.createPost(accountId, title, tag, detail, files, rootPath, contextPath));
     }
 
-    @RequestMapping(value = "/seePost", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/createFloor", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String seePost(@RequestParam("postId") int postId) {
-        logger.info(JSON.toJSONString(postService.getAllFloorDatas(postId)));
-        return JSON.toJSONString(postService.getAllFloorDatas(postId));
+    public String createPost(@RequestParam("accountId") int accountId,
+                             @RequestParam("postId") int postId,
+                             @RequestParam("detail") String detail,
+                             @RequestParam("file") MultipartFile[] files,
+                             HttpServletRequest request) {
+        logger.info("detail " + detail);
+        /*上传文件根路径*/
+        String rootPath = request.getSession().getServletContext().getRealPath("/") + "upload";
+        /*对应url根路径*/
+        String contextPath = request.getContextPath() + "/upload";
+        return JSON.toJSONString(postService.createFloor(accountId, postId, detail, files, rootPath, contextPath));
     }
+
+    @RequestMapping(value = "/createReply", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public String createPost(@RequestParam("accountId") int accountId,
+                             @RequestParam("postId") int postId,
+                             @RequestParam("replyFloorId") int replyFloorId,
+                             @RequestParam("detail") String detail,
+                             @RequestParam("file") MultipartFile[] files,
+                             HttpServletRequest request) {
+        logger.info("detail " + detail);
+        /*上传文件根路径*/
+        String rootPath = request.getSession().getServletContext().getRealPath("/") + "upload";
+        /*对应url根路径*/
+        String contextPath = request.getContextPath() + "/upload";
+        return JSON.toJSONString(postService.createReply(accountId, postId, replyFloorId, detail, files, rootPath, contextPath));
+    }
+
+
+
 
     @RequestMapping(value = "/seeReply", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public String seeReply(@RequestParam("accountId") int accountId) {
         return JSON.toJSONString(postService.getReplyDataByAccountId(accountId));
     }
+
 
 }

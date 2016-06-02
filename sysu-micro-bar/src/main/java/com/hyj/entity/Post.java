@@ -5,7 +5,7 @@ import java.util.Date;
 public class Post {
     private Integer id;
 
-    private Integer creatorId;
+    private Account creator;
 
     private String title;
 
@@ -15,8 +15,14 @@ public class Post {
 
     private Date modifyTime;
 
-    public Post(Integer creatorId, String title, Integer tag, Date createTime, Date modifyTime) {
-        this.creatorId = creatorId;
+
+    public Post(String title, Integer tag) {
+        this.title = title;
+        this.tag = tag;
+    }
+
+    public Post(Account creator, String title, Integer tag, Date createTime, Date modifyTime) {
+        this.creator = creator;
         this.title = title;
         this.tag = tag;
         this.createTime = createTime;
@@ -35,12 +41,12 @@ public class Post {
         this.id = id;
     }
 
-    public Integer getCreatorId() {
-        return creatorId;
+    public Account getCreator() {
+        return creator;
     }
 
-    public void setCreatorId(Integer creatorId) {
-        this.creatorId = creatorId;
+    public void setCreator(Account creator) {
+        this.creator = creator;
     }
 
     public String getTitle() {

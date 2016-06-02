@@ -5,11 +5,11 @@ import java.util.Date;
 public class Floor {
     private Integer id;
 
-    private Integer postId;
+    private Post post;
 
-    private Integer accountId;
+    private Account account;
 
-    private Integer replyFloorId;
+    private Floor replyFloor;
 
     private Boolean isReply;
 
@@ -21,10 +21,10 @@ public class Floor {
 
     public Floor() {}
 
-    public Floor(Integer postId, Integer accountId, Integer replyFloorId, Boolean isReply,  Date createTime, String detail) {
-        this.postId = postId;
-        this.accountId = accountId;
-        this.replyFloorId = replyFloorId;
+    public Floor(Post post, Account account, Floor replyFloor, Boolean isReply,  Date createTime, String detail) {
+        this.post = post;
+        this.account = account;
+        this.replyFloor = replyFloor;
         this.isReply = isReply;
         this.createTime = createTime;
         this.detail = detail;
@@ -38,28 +38,28 @@ public class Floor {
         this.id = id;
     }
 
-    public Integer getPostId() {
-        return postId;
+    public Post getPost() {
+        return post;
     }
 
-    public void setPostId(Integer postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
-    public Integer getAccountId() {
-        return accountId;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setAccountId(Integer accountId) {
-        this.accountId = accountId;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
-    public Integer getReplyFloorId() {
-        return replyFloorId;
+    public Floor getReplyFloor() {
+        return replyFloor;
     }
 
-    public void setReplyFloorId(Integer replyFloorId) {
-        this.replyFloorId = replyFloorId;
+    public void setReplyFloor(Floor replyFloor) {
+        this.replyFloor = replyFloor;
     }
 
     public Boolean getIsReply() {

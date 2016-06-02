@@ -24,6 +24,14 @@ public class FloorMapperTest {
 
     @Resource
     private FloorMapper floorMapper;
+
+    @Test
+    public void selectByPrimaryKey() throws Exception {
+//        logger.info(JSON.toJSONString(floorMapper.selectByPrimaryKey(1)));
+        logger.info(JSON.toJSONString(floorMapper.selectByPrimaryKey(1).getReplyFloor()));
+
+    }
+
     @Test
     public void selectCountByPostId() throws Exception {
         logger.info(JSON.toJSONString(floorMapper.selectCountByPostId(1)));
