@@ -31,8 +31,6 @@ import java.util.List;
  */
 public class FloorAdapter extends BaseAdapter {
 
-    public static int count = 0;
-
     private Context mContext;
     private List<Floor> floors;
     private LayoutInflater mInflater;
@@ -124,7 +122,6 @@ public class FloorAdapter extends BaseAdapter {
                 levelListDrawable.setBounds(0, 0, loadingImage.getIntrinsicWidth(), loadingImage.getIntrinsicHeight());
                 Bitmap bitmap = getBitmapFromCache(source);
                 if (bitmap == null) {
-                    Log.d("FloorAdapter", ""+count++);
                     // 异步加载图片
                     new ImageGetterAsyncTask(mContext, source, levelListDrawable).execute(viewHolder.floorContent);
                 } else {
