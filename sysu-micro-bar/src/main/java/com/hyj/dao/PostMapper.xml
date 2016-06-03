@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hyj.dao.PostMapper" >
+  <!-- 为了返回List类型而定义的resultMap -->
+  <resultMap id="BaseResultMap" type="com.hyj.entity.Post" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <!--<result column="creator_id" property="creatorId" jdbcType="INTEGER" />-->
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="tag" property="tag" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <association property="creator" column="creator_id" select="com.hyj.dao.AccountMapper.selectByPrimaryKey"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, creator_id, title, tag, create_time, modify_time
+  </sql>
+
+
+  <select id="selectAllPost" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from post
+    order by create_time desc
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from post
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from post
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.hyj.entity.Post" >
+    insert into post (id, creator_id, title, 
+      tag, create_time, modify_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{creatorId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{tag,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <select id="searchByTitleAndTag" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from post
+    <!--where title like concat(concat('%', #{0}), '%') and tag = #{1} -->
+    <!-- “where”标签会知道如果它包含的标签中有返回值的话，它就插入一个‘where’。
+    此外，如果标签返回的内容是以AND 或OR 开头的，则它会剔除掉。-->
+    <where>
+      <if test="title != null">
+        title like concat(concat('%', #{title, jdbcType=VARCHAR}), '%')
+      </if>
+      <if test="tag != null">
+        and tag = #{tag, jdbcType=INTEGER}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+  <insert id="insertSelective" parameterType="com.hyj.entity.Post" >
+    insert into post
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="creatorId != null" >
+        creator_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="tag != null" >
+        tag,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="creatorId != null" >
+        #{creatorId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="tag != null" >
+        #{tag,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hyj.entity.Post" >
+    update post
+    <set >
+      <if test="creatorId != null" >
+        creator_id = #{creatorId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="tag != null" >
+        tag = #{tag,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hyj.entity.Post" >
+    update post
+    set creator_id = #{creatorId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      tag = #{tag,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

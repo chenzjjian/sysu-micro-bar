@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hyj.dao.FloorMapper" >
+  <resultMap id="BaseResultMap" type="com.hyj.entity.Floor" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <!--    <result column="post_id" property="postId" jdbcType="INTEGER" />
+      <result column="account_id" property="accountId" jdbcType="INTEGER" />
+       <result column="reply_floor_id" property="replyFloorId" jdbcType="INTEGER" />-->
+    <result column="is_reply" property="isReply" jdbcType="BIT" />
+    <result column="level_num" property="levelNum" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <association property="post" column="post_id" select="com.hyj.dao.PostMapper.selectByPrimaryKey" />
+    <association property="account" column="account_id" select="com.hyj.dao.AccountMapper.selectByPrimaryKey"/>
+    <association property="replyFloor" column="reply_floor_id" select="com.hyj.dao.FloorMapper.selectByPrimaryKey"/>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.hyj.entity.Floor" extends="BaseResultMap" >
+    <result column="detail" property="detail" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, post_id, account_id, reply_floor_id, is_reply, level_num, create_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    detail
+  </sql>
+  <select id="selectByReply" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from floor
+    where account_id = #{accountId,jdbcType=INTEGER} and is_reply = true
+    order by create_time desc
+  </select>
+
+
+  <select id="selectByPostId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from floor
+    where post_id = #{postId,jdbcType=INTEGER}
+    order by create_time desc
+  </select>
+  <select id="selectCountByPostId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select count(*)
+    from floor
+    where post_id = #{postId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from floor
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from floor
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.hyj.entity.Floor" >
+    insert into floor (id, post_id, account_id, 
+      reply_floor_id, is_reply, level_num, 
+      create_time, detail)
+    values (#{id,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, 
+      #{replyFloorId,jdbcType=INTEGER}, #{isReply,jdbcType=BIT}, #{levelNum,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{detail,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hyj.entity.Floor" >
+    insert into floor
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="postId != null" >
+        post_id,
+      </if>
+      <if test="accountId != null" >
+        account_id,
+      </if>
+      <if test="replyFloorId != null" >
+        reply_floor_id,
+      </if>
+      <if test="isReply != null" >
+        is_reply,
+      </if>
+      <if test="levelNum != null" >
+        level_num,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="detail != null" >
+        detail,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="postId != null" >
+        #{postId,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null" >
+        #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="replyFloorId != null" >
+        #{replyFloorId,jdbcType=INTEGER},
+      </if>
+      <if test="isReply != null" >
+        #{isReply,jdbcType=BIT},
+      </if>
+      <if test="levelNum != null" >
+        #{levelNum,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="detail != null" >
+        #{detail,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hyj.entity.Floor" >
+    update floor
+    <set >
+      <if test="postId != null" >
+        post_id = #{postId,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null" >
+        account_id = #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="replyFloorId != null" >
+        reply_floor_id = #{replyFloorId,jdbcType=INTEGER},
+      </if>
+      <if test="isReply != null" >
+        is_reply = #{isReply,jdbcType=BIT},
+      </if>
+      <if test="levelNum != null" >
+        level_num = #{levelNum,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="detail != null" >
+        detail = #{detail,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hyj.entity.Floor" >
+    update floor
+    set post_id = #{postId,jdbcType=INTEGER},
+      account_id = #{accountId,jdbcType=INTEGER},
+      reply_floor_id = #{replyFloorId,jdbcType=INTEGER},
+      is_reply = #{isReply,jdbcType=BIT},
+      level_num = #{levelNum,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      detail = #{detail,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hyj.entity.Floor" >
+    update floor
+    set post_id = #{postId,jdbcType=INTEGER},
+      account_id = #{accountId,jdbcType=INTEGER},
+      reply_floor_id = #{replyFloorId,jdbcType=INTEGER},
+      is_reply = #{isReply,jdbcType=BIT},
+      level_num = #{levelNum,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

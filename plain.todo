@@ -1,9 +1,17 @@
 每日计划:
   首次使用PlainTask插件编辑todolist，使用详细Tutorial请见Preferences-->Package Settings-->PlainTask-->Tutorial.todo，ctrl+R可以查看概况，ctrl+D代表任务已完成，alt+c表示取消任务，ctrl+shift+A表示对已完成的任务进行归档，@due表示deadline，ctrl+enter开启新任务
   任务:
-   ☐ 确定基本需求，设计原型 @high @due(+w)
-   ☐ Android前端根据原型进行页面开发
-   ☐ web后端设计与业务逻辑相对应的数据库，并搭好后台，编写对应的测试代码
+   □ 后台程序完成发帖、看帖、回复帖子等业务流程程序 @critical
+   □ 前端与后台的交互测试 @critical
 Archive:
- ✔ 确定"中大微吧"主题，提交申请表  @done (16-05-07 21:45) @project(每日计划 / 任务)
+ √ 后台完成帖子的创建、查看与搜索模块，编写了新的后台api开发文档(by 黄勇进) @done (16-06-02) @project(每日计划 / 任务)
+ √ 修改设计原型图(by 陈梓健) @done (16-06-02) @project(每日计划 / 任务)
+ √ 前端登录界面与测试get(by 陈梓健) @done (16-05-27) @project(每日计划 / 任务)
+ √ 前端注册界面与测试get(by 洪灿辉) @done (16-05-27) @project(每日计划 / 任务)
+ √ 利用SSM搭建服务器后台程序，编写并测试登录与注册接口，编写后台api文档，并部署到阿里云(by 黄勇进) @done (16-05-22) @project(每日计划 / 任务)
+ √ 前端发帖操作get(by 黎峰君) @done (16-05-21) @project(每日计划 / 任务)
+ √ 利用MockPlus设计原型图最终版(by 陈梓健) @done (16-05-18) @project(每日计划 / 任务)
+ √ 完成用例图和数据库建模(by 黄勇进) @done (16-05-16) @project(每日计划 / 任务)
+ √ 确定基本需求，设计原型(by 全体) @high @due(+w) @done (16-05-14) @project(每日计划 / 任务)
+ √ 确定"中大微吧"主题，提交申请表(by 全体)  @done (16-05-07 21:45) @project(每日计划 / 任务)
 
