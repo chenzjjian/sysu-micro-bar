@@ -1,0 +1,9 @@
+每日计划:
+  首次使用PlainTask插件编辑todolist，使用详细Tutorial请见Preferences-->Package Settings-->PlainTask-->Tutorial.todo，ctrl+R可以查看概况，ctrl+D代表任务已完成，alt+c表示取消任务，ctrl+shift+A表示对已完成的任务进行归档，@due表示deadline，ctrl+enter开启新任务
+  任务:
+   ☐ 确定基本需求，设计原型 @high @due(+w)
+   ☐ Android前端根据原型进行页面开发
+   ☐ web后端设计与业务逻辑相对应的数据库，并搭好后台，编写对应的测试代码
+Archive:
+ ✔ 确定"中大微吧"主题，提交申请表  @done (16-05-07 21:45) @project(每日计划 / 任务)
+
