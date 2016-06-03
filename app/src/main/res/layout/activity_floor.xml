@@ -12,6 +12,7 @@
         android:text="没有女朋友是一种怎样的体验?"
         android:textStyle="bold"
         android:textSize="24sp"/>
+    <!--layout_height修改为match_parent,避免getView重复加载-->
     <ListView
         android:id="@+id/container"
         android:layout_width="match_parent"
