@@ -28,8 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textMultiLine"
-            android:maxLines="1"
-            android:textSize="24sp" />
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -47,13 +46,15 @@
 
         <Spinner
             android:id="@+id/postTag"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="right"
             android:entries="@array/postTags">
         </Spinner>
     </LinearLayout>
     <!--作为内容输入框,可复用-->
     <ScrollView
+        android:id="@+id/contentBorder"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -64,9 +65,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:gravity="start|top"
-            android:hint="输入内容"
-            android:minLines="1"
-            android:textSize="24sp" />
+            android:hint="输入内容" />
     </ScrollView>
     <!--移到顶部菜单栏,选取或拍摄照片和发布两个功能-->
     <RelativeLayout
