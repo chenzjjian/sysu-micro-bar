@@ -31,6 +31,7 @@ public class FloorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_floor);
         title = (TextView) findViewById(R.id.title);
         title.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        // 648
         int width = title.getMeasuredWidth();
         container = (ListView) findViewById(R.id.container);
         initData();
