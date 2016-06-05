@@ -47,7 +47,7 @@ public class ImageUtil {
         // options的inSampleSize只能为2的幂,所有其它的值都会被近似成小于该值且最接近该值的2的幂
         Bitmap src = BitmapFactory.decodeFile(filePath, options);
         if (src != null) {
-            Bitmap dst = createScaleBitmap(src, reqWidth, reqHeight);
+            Bitmap dst = createScaleBitmap(src, reqWidth, 0);
             if (src != dst) {
                 src.recycle();
             }
@@ -56,6 +56,14 @@ public class ImageUtil {
         return null;
     }
 
+    /**
+     *
+     * @param res 资源对象
+     * @param id 资源id
+     * @param reqWidth 目标宽度
+     * @param reqHeight 目标高度
+     * @return 压缩后的图片
+     */
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int id, int reqWidth, int reqHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -65,7 +73,7 @@ public class ImageUtil {
 
         Bitmap src = BitmapFactory.decodeResource(res, id, options);
         if (src != null) {
-            Bitmap dst = createScaleBitmap(src, reqWidth, reqHeight);
+            Bitmap dst = createScaleBitmap(src, reqWidth, 0);
             if (src != dst) {
                 src.recycle();
             }
@@ -89,7 +97,7 @@ public class ImageUtil {
         } else {
             dst = Bitmap.createScaledBitmap(src, dstWidth, dstHeight, false);
         }
-        Log.d("ImageUtils", "dstWidth is " + dst.getWidth() + ",dstHeight is " + dst.getHeight());
+        Log.d("ImageUtils", "dstWidth is " + dst.getWidth() + ", dstHeight is " + dst.getHeight());
         return dst;
     }
 }

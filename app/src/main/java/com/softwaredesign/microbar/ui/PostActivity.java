@@ -14,18 +14,19 @@ import android.text.Spanned;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.softwaredesign.microbar.R;
 import com.softwaredesign.microbar.util.ImageUtil;
+import com.softwaredesign.microbar.util.UploadUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,10 +34,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by mac on 16/6/3.
@@ -45,8 +42,11 @@ public class PostActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURE = 0;
     private static final int TAKE_PHOTO = 1;
-    private static final String UPLOAD_URL = "http://172.18.40.194:8080/Spring/uploadMultipleFile";
+    private static final String UPLOAD_URL = "http://172.18.40.194:8080/sysu-micro-bar/createPost";
 
+    private EditText postTitle;
+    private Spinner postTagSpinner;
+    private int postTag;
     private EditText content;
     private ImageButton select_picture;
     private ImageButton take_photo;
@@ -67,12 +67,29 @@ public class PostActivity extends AppCompatActivity {
     public void init() {
         select_picture = (ImageButton) findViewById(R.id.select_picture);
         take_photo = (ImageButton) findViewById(R.id.take_photo);
+        postTitle = (EditText)findViewById(R.id.postTitle);
+        postTagSpinner = (Spinner) findViewById(R.id.postTag);
         content = (EditText) findViewById(R.id.content);
         commit = (Button) findViewById(R.id.commit);
         pictures = new HashMap<>();
     }
 
     public void setListener() {
+        final String[] postTags = getResources().getStringArray(R.array.postTags);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, postTags);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        postTagSpinner.setAdapter(adapter);
+        postTagSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                postTag = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+        });
         select_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +109,7 @@ public class PostActivity extends AppCompatActivity {
         commit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadContent(content.getText(), pictures);
+                uploadPost();
                 Log.i("ImageAndText", "" + content.getText());
                 Intent intent = new Intent(PostActivity.this, FloorActivity.class);
                 startActivity(intent);
@@ -136,52 +153,13 @@ public class PostActivity extends AppCompatActivity {
     }
 
     /**
-     * 上传帖子的内容
-     *
-     * @param editable           EditText的内容(EditText.getText)
-     * @param spanStrings_pathes 存储图片的spanString和path
+     * 上传帖子
      */
-    public void uploadContent(Editable editable, Map<String, String> spanStrings_pathes) {
-        AsyncHttpClient client = new AsyncHttpClient();
+    public void uploadPost() {
         RequestParams params = new RequestParams();
-        params.put("content", editable);
-
-        // 利用正则表达式在文本中去匹配表示图片的key
-        File[] files = new File[spanStrings_pathes.size()];
-        String regex = "\\[img=\\w+-\\w+-\\w+-\\w+-\\w+\\]";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(editable);
-        int count = 0;
-        while (m.find()) {
-            String path = spanStrings_pathes.get(m.group());
-            files[count++] = new File(path);
-        }
-        try {
-            params.put("file", files);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        client.post(UPLOAD_URL, params, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                if (statusCode == 200) {
-                    if (headers != null) {
-                        for (Header header : headers)
-                            Log.i("Headers", header.getName() + ":" + header.getValue());
-                    }
-                    String response = new String(responseBody);
-                    Log.i("ResponseBody", response);
-                } else {
-                    Log.i("onSuccess", "上传失败[" + statusCode + "错误]");
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                Log.i("onFailure", "上传失败[" + statusCode + "错误]");
-            }
-        });
+        UploadUtil.addTitleAndTag(params, 13331095, postTitle, postTag);
+        UploadUtil.addContent(params, content, pictures);
+        UploadUtil.sendRequest(UPLOAD_URL, params);
     }
 
     @Override
