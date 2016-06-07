@@ -9,13 +9,17 @@ public class HistoryMessage {
 
     private Boolean isChecked;
 
+    private Boolean isComment;
+
+
     public HistoryMessage() {
     }
 
-    public HistoryMessage(Account account, Floor floor, Boolean isChecked) {
+    public HistoryMessage(Account account, Floor floor, Boolean isChecked, Boolean isComment) {
         this.account = account;
         this.floor = floor;
         this.isChecked = isChecked;
+        this.isComment = isComment;
     }
 
     public Integer getId() {
@@ -48,5 +52,13 @@ public class HistoryMessage {
 
     public void setIsChecked(Boolean isChecked) {
         this.isChecked = isChecked;
+    }
+
+    public Boolean getComment() {
+        return isComment;
+    }
+
+    public void setComment(Boolean comment) {
+        isComment = comment;
     }
 }

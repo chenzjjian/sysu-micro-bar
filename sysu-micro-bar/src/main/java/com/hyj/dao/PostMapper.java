@@ -20,7 +20,7 @@ public interface PostMapper {
 
     List<Post> searchByTitleAndTag(@Param("title") String title, @Param("tag") Integer tag);
 
-    List<Post> selectAllPost();
+    List<Post> selectAllPost(Integer currentPostNum);
 
 
 }

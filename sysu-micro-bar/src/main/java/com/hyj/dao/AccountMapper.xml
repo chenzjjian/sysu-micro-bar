@@ -29,7 +29,7 @@
     delete from account
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.hyj.entity.Account" >
+  <insert id="insert" parameterType="com.hyj.entity.Account"  keyProperty="id" useGeneratedKeys="true">
     insert into account (id, stu_no, password, 
       nickname, head_image_url, authority, 
       register_time)
@@ -37,7 +37,7 @@
       #{nickname,jdbcType=VARCHAR}, #{headImageUrl,jdbcType=VARCHAR}, #{authority,jdbcType=INTEGER}, 
       #{registerTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.hyj.entity.Account" >
+  <insert id="insertSelective" parameterType="com.hyj.entity.Account"  keyProperty="id" useGeneratedKeys="true">
     insert into account
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

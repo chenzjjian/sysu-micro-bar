@@ -16,11 +16,12 @@
   </sql>
 
 
-  <select id="selectAllPost" resultMap="BaseResultMap">
+  <select id="selectAllPost" resultMap="BaseResultMap" parameterType="java.lang.Integer">
     select
     <include refid="Base_Column_List" />
     from post
-    order by create_time desc
+    order by create_time desc, id
+    limit #{currentPostNum, jdbcType=INTEGER}, 10
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -33,11 +34,11 @@
     delete from post
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.hyj.entity.Post" >
+  <insert id="insert" parameterType="com.hyj.entity.Post" keyProperty="id" useGeneratedKeys="true">
     insert into post (id, creator_id, title, 
       tag, create_time, modify_time
       )
-    values (#{id,jdbcType=INTEGER}, #{creatorId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{creator.id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
       #{tag,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -58,13 +59,13 @@
     </where>
     order by create_time desc
   </select>
-  <insert id="insertSelective" parameterType="com.hyj.entity.Post" >
+  <insert id="insertSelective" parameterType="com.hyj.entity.Post" useGeneratedKeys="true" keyProperty="id">
     insert into post
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="creatorId != null" >
+      <if test="creator.id != null" >
         creator_id,
       </if>
       <if test="title != null" >
@@ -84,8 +85,8 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="creatorId != null" >
-        #{creatorId,jdbcType=INTEGER},
+      <if test="creator.id != null" >
+        #{creator.id,jdbcType=INTEGER},
       </if>
       <if test="title != null" >
         #{title,jdbcType=VARCHAR},

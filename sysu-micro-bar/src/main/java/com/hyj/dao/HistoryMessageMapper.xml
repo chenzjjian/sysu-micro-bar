@@ -3,17 +3,27 @@
 <mapper namespace="com.hyj.dao.HistoryMessageMapper" >
   <resultMap id="BaseResultMap" type="com.hyj.entity.HistoryMessage" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="account_id" property="accountId" jdbcType="INTEGER" />
-    <result column="floor_id" property="floorId" jdbcType="INTEGER" />
+    <result column="account_id" property="account.id" jdbcType="INTEGER" />
+    <result column="floor_id" property="floor.id" jdbcType="INTEGER" />
     <result column="is_checked" property="isChecked" jdbcType="BIT" />
+    <result column="is_comment" property="isComment" jdbcType="BIT" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, account_id, floor_id, is_checked
+    id, account_id, floor_id, is_checked, is_comment
   </sql>
+
+  <select id="selectAllData" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from history_message
+    where account_id = #{account.id,jdbcType=INTEGER}
+    order by create_time desc, id
+    limit #{currentMessageNum, jdbcType=INTEGER}, 10
+  </select>
   <select id="selectCountByNotChecked" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select count(*)
     from history_message
-    where account_id = #{accountId,jdbcType=INTEGER} and is_checked = false
+    where account_id = #{account.id,jdbcType=INTEGER} and is_checked = false
   </select>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -26,63 +36,73 @@
     delete from history_message
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.hyj.entity.HistoryMessage" >
-    insert into history_message (id, account_id, floor_id, 
+  <insert id="insert" parameterType="com.hyj.entity.HistoryMessage" useGeneratedKeys="true" keyProperty="id">
+    insert into history_message (id, account_id, floor_id,
       is_checked)
-    values (#{id,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, #{floorId,jdbcType=INTEGER}, 
-      #{isChecked,jdbcType=BIT})
+    values (#{id,jdbcType=INTEGER}, #{account.id,jdbcType=INTEGER}, #{floor.id,jdbcType=INTEGER}, 
+      #{isChecked,jdbcType=BIT}, #{isComment,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" parameterType="com.hyj.entity.HistoryMessage" >
+  <insert id="insertSelective" parameterType="com.hyj.entity.HistoryMessage" useGeneratedKeys="true" keyProperty="id">
     insert into history_message
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="accountId != null" >
+      <if test="account.id != null" >
         account_id,
       </if>
-      <if test="floorId != null" >
+      <if test="floor.id != null" >
         floor_id,
       </if>
       <if test="isChecked != null" >
         is_checked,
+      </if>
+      <if test="isComment != null" >
+        is_comment,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="accountId != null" >
-        #{accountId,jdbcType=INTEGER},
+      <if test="account.id != null" >
+        #{account.id,jdbcType=INTEGER},
       </if>
-      <if test="floorId != null" >
-        #{floorId,jdbcType=INTEGER},
+      <if test="floor.id != null" >
+        #{floor.id,jdbcType=INTEGER},
       </if>
       <if test="isChecked != null" >
         #{isChecked,jdbcType=BIT},
+      </if>
+      <if test="isComment != null" >
+        #{isComment,jdbcType=BIT},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.hyj.entity.HistoryMessage" >
     update history_message
     <set >
-      <if test="accountId != null" >
-        account_id = #{accountId,jdbcType=INTEGER},
+      <if test="account.id != null" >
+        account_id = #{account.id,jdbcType=INTEGER},
       </if>
-      <if test="floorId != null" >
-        floor_id = #{floorId,jdbcType=INTEGER},
+      <if test="floor.id != null" >
+        floor_id = #{floor.id,jdbcType=INTEGER},
       </if>
       <if test="isChecked != null" >
         is_checked = #{isChecked,jdbcType=BIT},
+      </if>
+      <if test="isComment != null" >
+        is_comment = #{isComment,jdbcType=BIT},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.hyj.entity.HistoryMessage" >
     update history_message
-    set account_id = #{accountId,jdbcType=INTEGER},
-      floor_id = #{floorId,jdbcType=INTEGER},
-      is_checked = #{isChecked,jdbcType=BIT}
+    set account_id = #{account.id,jdbcType=INTEGER},
+      floor_id = #{floor.id,jdbcType=INTEGER},
+      is_checked = #{isChecked,jdbcType=BIT},
+      is_comment = #{isComment,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

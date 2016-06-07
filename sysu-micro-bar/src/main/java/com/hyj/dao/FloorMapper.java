@@ -21,7 +21,5 @@ public interface FloorMapper {
 
     int updateByPrimaryKeySelective(Floor record);
 
-    int updateByPrimaryKeyWithBLOBs(Floor record);
-
     int updateByPrimaryKey(Floor record);
 }

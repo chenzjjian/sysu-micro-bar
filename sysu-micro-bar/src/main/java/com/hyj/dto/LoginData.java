@@ -6,7 +6,7 @@ import com.hyj.entity.Account;
  * Created by Administrator on 2016/5/26 0026.
  */
 public class LoginData {
-    private int accountId;
+    private Integer accountId;
     private boolean loginStatus;
     private String message;
 
@@ -18,7 +18,7 @@ public class LoginData {
         this.message = message;
     }
 
-    public void setAccountId(int accountId) {
+    public void setAccountId(Integer accountId) {
         this.accountId = accountId;
     }
 
@@ -30,7 +30,7 @@ public class LoginData {
         this.message = message;
     }
 
-    public int getAccountId() {
+    public Integer getAccountId() {
         return accountId;
     }
 

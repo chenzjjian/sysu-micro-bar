@@ -30,8 +30,8 @@ public class PostMapperTest {
 
     @Test
     public void selectAllPost() throws Exception {
-        logger.info(JSON.toJSONString(postMapper.selectAllPost()));
-        for (Post post : postMapper.selectAllPost()) {
+        logger.info(JSON.toJSONString(postMapper.selectAllPost(0)));
+        for (Post post : postMapper.selectAllPost(0)) {
             logger.info(JSON.toJSONString(post.getCreator()));
         }
     }

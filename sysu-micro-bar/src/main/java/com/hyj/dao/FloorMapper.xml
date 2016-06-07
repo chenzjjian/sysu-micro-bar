@@ -4,8 +4,8 @@
   <resultMap id="BaseResultMap" type="com.hyj.entity.Floor" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <!--    <result column="post_id" property="postId" jdbcType="INTEGER" />
-      <result column="account_id" property="accountId" jdbcType="INTEGER" />
-       <result column="reply_floor_id" property="replyFloorId" jdbcType="INTEGER" />-->
+      <result column="account_id" property="account.id" jdbcType="INTEGER" />
+       <result column="reply_floor_id" property="replyFloor.id" jdbcType="INTEGER" />-->
     <result column="is_reply" property="isReply" jdbcType="BIT" />
     <result column="level_num" property="levelNum" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -28,7 +28,7 @@
     ,
     <include refid="Blob_Column_List" />
     from floor
-    where account_id = #{accountId,jdbcType=INTEGER} and is_reply = true
+    where account_id = #{account.id,jdbcType=INTEGER} and is_reply = true
     order by create_time desc
   </select>
 
@@ -39,13 +39,13 @@
     ,
     <include refid="Blob_Column_List" />
     from floor
-    where post_id = #{postId,jdbcType=INTEGER}
+    where post_id = #{post.id,jdbcType=INTEGER}
     order by create_time desc
   </select>
   <select id="selectCountByPostId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select count(*)
     from floor
-    where post_id = #{postId,jdbcType=INTEGER}
+    where post_id = #{post.id,jdbcType=INTEGER}
   </select>
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
     select 
@@ -59,27 +59,27 @@
     delete from floor
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.hyj.entity.Floor" >
+  <insert id="insert" parameterType="com.hyj.entity.Floor" keyProperty="id" useGeneratedKeys="true" >
     insert into floor (id, post_id, account_id, 
       reply_floor_id, is_reply, level_num, 
       create_time, detail)
-    values (#{id,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, 
-      #{replyFloorId,jdbcType=INTEGER}, #{isReply,jdbcType=BIT}, #{levelNum,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{post.id,jdbcType=INTEGER}, #{account.id,jdbcType=INTEGER},
+      #{<if test="replyFloor != null">replyFloor.id,jdbcType=INTEGER</if>}, #{isReply,jdbcType=BIT}, #{levelNum,jdbcType=INTEGER},
       #{createTime,jdbcType=TIMESTAMP}, #{detail,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.hyj.entity.Floor" >
+  <insert id="insertSelective" parameterType="com.hyj.entity.Floor"  keyProperty="id" useGeneratedKeys="true">
     insert into floor
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="postId != null" >
+      <if test="post.id != null" >
         post_id,
       </if>
-      <if test="accountId != null" >
+      <if test="account.id != null" >
         account_id,
       </if>
-      <if test="replyFloorId != null" >
+      <if test="replyFloor != null and replyFloor.id != null" >
         reply_floor_id,
       </if>
       <if test="isReply != null" >
@@ -99,14 +99,14 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="postId != null" >
-        #{postId,jdbcType=INTEGER},
+      <if test="post.id != null" >
+        #{post.id,jdbcType=INTEGER},
       </if>
-      <if test="accountId != null" >
-        #{accountId,jdbcType=INTEGER},
+      <if test="account.id != null" >
+        #{account.id,jdbcType=INTEGER},
       </if>
-      <if test="replyFloorId != null" >
-        #{replyFloorId,jdbcType=INTEGER},
+      <if test="replyFloor != null and replyFloor.id != null" >
+        #{replyFloor.id,jdbcType=INTEGER},
       </if>
       <if test="isReply != null" >
         #{isReply,jdbcType=BIT},
@@ -125,14 +125,14 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.hyj.entity.Floor" >
     update floor
     <set >
-      <if test="postId != null" >
-        post_id = #{postId,jdbcType=INTEGER},
+      <if test="post.id != null" >
+        post_id = #{post.id,jdbcType=INTEGER},
       </if>
-      <if test="accountId != null" >
-        account_id = #{accountId,jdbcType=INTEGER},
+      <if test="account.id != null" >
+        account_id = #{account.id,jdbcType=INTEGER},
       </if>
-      <if test="replyFloorId != null" >
-        reply_floor_id = #{replyFloorId,jdbcType=INTEGER},
+      <if test="replyFloor != null and replyFloor.id != null" >
+        reply_floor_id = #{replyFloor.id,jdbcType=INTEGER},
       </if>
       <if test="isReply != null" >
         is_reply = #{isReply,jdbcType=BIT},
@@ -151,9 +151,11 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hyj.entity.Floor" >
     update floor
-    set post_id = #{postId,jdbcType=INTEGER},
-      account_id = #{accountId,jdbcType=INTEGER},
-      reply_floor_id = #{replyFloorId,jdbcType=INTEGER},
+    set post_id = #{post.id,jdbcType=INTEGER},
+      account_id = #{account.id,jdbcType=INTEGER},
+      <if test="detail != null" >
+        reply_floor_id = #{replyFloor.id,jdbcType=INTEGER},
+      </if>
       is_reply = #{isReply,jdbcType=BIT},
       level_num = #{levelNum,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -162,9 +164,11 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.hyj.entity.Floor" >
     update floor
-    set post_id = #{postId,jdbcType=INTEGER},
-      account_id = #{accountId,jdbcType=INTEGER},
-      reply_floor_id = #{replyFloorId,jdbcType=INTEGER},
+    set post_id = #{post.id,jdbcType=INTEGER},
+      account_id = #{account.id,jdbcType=INTEGER},
+      <if test="detail != null" >
+        reply_floor_id = #{replyFloor.id,jdbcType=INTEGER},
+      </if>
       is_reply = #{isReply,jdbcType=BIT},
       level_num = #{levelNum,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP}

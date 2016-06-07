@@ -4,18 +4,18 @@ package com.hyj.dto;
  * Created by Administrator on 2016/5/26 0026.
  */
 public class FloorData {
-    int floorId;
+    Integer floorId;
     String headImageUrl;
     String nickname;
     String createTime;
     String detail;
     boolean isReply;
     String replyWho;
-    int replyFloorId;
+    Integer replyFloorId;
 
     public FloorData() {}
 
-    public FloorData(int floorId, String headImageUrl, String nickname, String createTime, String detail, boolean isReply, String replyWho, int replyFloorId) {
+    public FloorData(Integer floorId, String headImageUrl, String nickname, String createTime, String detail, boolean isReply, String replyWho, Integer replyFloorId) {
         this.floorId = floorId;
         this.headImageUrl = headImageUrl;
         this.nickname = nickname;
@@ -26,19 +26,19 @@ public class FloorData {
         this.replyFloorId = replyFloorId;
     }
 
-    public int getFloorId() {
+    public Integer getFloorId() {
         return floorId;
     }
 
-    public void setFloorId(int floorId) {
+    public void setFloorId(Integer floorId) {
         this.floorId = floorId;
     }
 
-    public int getReplyFloorId() {
+    public Integer getReplyFloorId() {
         return replyFloorId;
     }
 
-    public void setReplyFloorId(int replyFloorId) {
+    public void setReplyFloorId(Integer replyFloorId) {
         this.replyFloorId = replyFloorId;
     }
 

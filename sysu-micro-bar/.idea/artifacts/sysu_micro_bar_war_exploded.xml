@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="sysu-micro-bar:war exploded">
-    <output-path>$PROJECT_DIR$/target/Spring</output-path>
+    <output-path>$PROJECT_DIR$/target/sysu-micro-bar</output-path>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">

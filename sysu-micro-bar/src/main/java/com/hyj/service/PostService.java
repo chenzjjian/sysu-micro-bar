@@ -2,7 +2,6 @@ package com.hyj.service;
 
 import com.hyj.dto.FloorData;
 import com.hyj.dto.PostData;
-import com.hyj.dto.ReplyData;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -15,7 +14,7 @@ public interface PostService {
      * 获取数据库中按创建时间排序的所有post数据
      * @return
      */
-    public List<PostData> getPostDataList();
+    public List<PostData> getPostDataList(int currentPostNum);
 
     /**
      * 根据标题关键字和标签进行搜索
@@ -69,10 +68,5 @@ public interface PostService {
      */
     public List<FloorData> getAllFloorDatas(int postId);
 
-    /**
-     * 给定用户账户id查看回复/评论
-     * @param accountId
-     * @return
-     */
-    public List<ReplyData> getReplyDataByAccountId(int accountId);
+
 }

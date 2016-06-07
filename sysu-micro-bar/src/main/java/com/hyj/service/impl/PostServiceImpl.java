@@ -1,10 +1,11 @@
 package com.hyj.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.hyj.constant.Constants;
 import com.hyj.dao.*;
 import com.hyj.dto.FloorData;
+import com.hyj.dto.HistoryData;
 import com.hyj.dto.PostData;
-import com.hyj.dto.ReplyData;
 import com.hyj.entity.*;
 import com.hyj.service.PostService;
 import com.hyj.util.DateTimeUtil;
@@ -43,8 +44,8 @@ public class PostServiceImpl implements PostService {
     private static final Logger logger = LoggerFactory
             .getLogger(PostServiceImpl.class);
 
-    public List<PostData> getPostDataList() {
-        List<Post> posts = postMapper.selectAllPost();
+    public List<PostData> getPostDataList(int currentPostNum) {
+        List<Post> posts = postMapper.selectAllPost(currentPostNum);
         List<PostData> postDatas = new ArrayList<PostData>();
         for (Post post : posts) {
             PostData postData = new PostData(post.getId(),
@@ -77,8 +78,9 @@ public class PostServiceImpl implements PostService {
      * @return
      */
     private String[] uploadFiles(int floorId, String dirName, String fileBaseUrl, MultipartFile[] files) {
+        logger.info("上传文件");
         String fileUrl /*+ 文件名*/;
-        String[] fileUrls = new String[]{};/*用于保存*/
+        String[] fileUrls = new String[files.length];/*用于保存*/
         int count = 0;
         for (MultipartFile file : files) {
             fileUrl = fileBaseUrl;
@@ -92,16 +94,16 @@ public class PostServiceImpl implements PostService {
                 File dir = new File(dirName);
                 if (!dir.exists())
                     dir.mkdirs();
-                File serverFile = new File(dir.getAbsolutePath()
-                        + File.separator + file.getOriginalFilename());
+                String filename = System.currentTimeMillis() + file.getOriginalFilename();
+                File serverFile = new File(dir.getAbsolutePath() + "/" + filename);
                 BufferedOutputStream stream = new BufferedOutputStream(
                         new FileOutputStream(serverFile));
                 stream.write(bytes);
                 stream.close();
                 logger.info("Server File Location="
                         + serverFile.getAbsolutePath());
-                // 将文件名添加到url中(要做加密处理的话再说- -)
-                fileUrl += file.getOriginalFilename();
+                // 将文件名添加到url中(用系统时间查重处理- -)
+                fileUrl += filename;
                 fileUrls[count++] = fileUrl;
                 floorFileMapper.insertSelective(new FloorFile(floorId, fileUrl, Constants.TYPE_IMAGE));
             } catch (Exception e) {
@@ -115,13 +117,16 @@ public class PostServiceImpl implements PostService {
      * 上传文件之后要把帖子的内容里的[img=uuid]替换成<img src="floor.getFileUrl()"></img>
      * */
     private void afterUploadFiles(String[] fileUrls, String content, Floor floor) {
+        logger.info("上传文件");
         if (fileUrls != null) {
             String regex = "\\[img=\\w+-\\w+-\\w+-\\w+-\\w+\\]";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(content);
             int count = 0;
             while (matcher.find()) {
-                content.replace(matcher.group(), "\n<img src=\"" + fileUrls[count++] + "\"</img>");
+                content = content.replace(matcher.group(), "\n<img src=\"" + fileUrls[count] + "\"</img>");
+                logger.info(content);
+                ++count;
             }
             floor.setDetail(content);
             floorMapper.updateByPrimaryKeySelective(floor);
@@ -133,11 +138,18 @@ public class PostServiceImpl implements PostService {
         Post post = new Post(account, title, tag, new Date(), new Date());
         postMapper.insertSelective(post);
         Floor floor = new Floor(post, account, null, false, new Date(), detail);
+        logger.info("postId" + post.getId());
         floorMapper.insertSelective(floor);
-        String dirName = rootPath + File.separator + "post" + post.getId() + File.separator + "floor" + floor.getId();
-        String fileBaseUrl = contextPath + File.separator + "post" + post.getId() + File.separator + "floor" + floor.getId() + File.separator;
-        String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
-        afterUploadFiles(fileUrls, detail, floor);
+        logger.info("floorId= =" + floor.getId());
+        if (files != null && files.length != 0) {
+            String dirName = rootPath + "/post" + post.getId() + "/floor" + floor.getId();
+            String fileBaseUrl = contextPath + "/post" + post.getId() + "/floor" + floor.getId() + "/";
+            String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
+            for (String fileUrl : fileUrls) {
+                logger.info("134123431241324" + fileUrl);
+            }
+            this.afterUploadFiles(fileUrls, detail, floor);
+        }
         return true;
     }
 
@@ -146,12 +158,23 @@ public class PostServiceImpl implements PostService {
         Post post = postMapper.selectByPrimaryKey(postId);
         Floor floor = new Floor(post, account, null, false, new Date(), detail);
         floorMapper.insertSelective(floor);
-        String dirName = rootPath + File.separator + "post" + postId + File.separator + "floor" + floor.getId();
-        String fileBaseUrl = contextPath + File.separator + "post" + postId + File.separator + "floor" + floor.getId() + File.separator;
-        String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
-        afterUploadFiles(fileUrls, detail, floor);
-        HistoryMessage historyMessage = new HistoryMessage(post.getCreator(), floor, false);
-        historyMessageMapper.insertSelective(historyMessage);
+        String dirName = rootPath + "/post" + postId + "/floor" + floor.getId();
+        String fileBaseUrl = contextPath + "/post" + postId + "/floor" + floor.getId() + "/";
+        logger.info(dirName);
+        logger.info(fileBaseUrl);
+        if (files != null && files.length != 0) {
+            String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
+            afterUploadFiles(fileUrls, detail, floor);
+        }
+        // 盖楼：如果楼是我盖的话就不需要插入历史信息
+        logger.info("创楼人" + floor.getAccount().getId());
+        logger.info("创建人" + post.getCreator().getId());
+        // 发布新的楼，并通知帖子的创建者
+        if (floor.getAccount().getId() != post.getCreator().getId()) {
+            logger.info("？？？" + floor.getId());
+            HistoryMessage historyMessage = new HistoryMessage(post.getCreator(), floor, false, true);
+            historyMessageMapper.insertSelective(historyMessage);
+        }
         return true;
     }
 
@@ -161,32 +184,33 @@ public class PostServiceImpl implements PostService {
         Floor replyFloor = floorMapper.selectByPrimaryKey(replyFloorId);
         Floor floor = new Floor(post, account, replyFloor, true, new Date(), detail);
         floorMapper.insertSelective(floor);
-        String dirName = rootPath + File.separator + "post" + postId + File.separator + "floor" + floor.getId();
-        String fileBaseUrl = contextPath + File.separator + "post" + postId + File.separator + "floor" + floor.getId() + File.separator;
-        String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
-        afterUploadFiles(fileUrls, detail, floor);
-        HistoryMessage historyMessage = new HistoryMessage(post.getCreator(), floor, false);
-        historyMessageMapper.insertSelective(historyMessage);
+        String dirName = rootPath + "/post" + postId + "/floor" + floor.getId();
+        String fileBaseUrl = contextPath + "/post" + postId + "/floor" + floor.getId() + "/";
+        if (files != null && files.length != 0) {
+            String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
+            afterUploadFiles(fileUrls, detail, floor);
+
+        }
+        // 回复某个人的时候，需要往历史消息表里插入两条记录
+        // 一个是通知帖子的创始人
+        // 另一个是通知回复的人
+        // 如果回复的那个帖子的创始人是accountId的话就不用提醒
+        if (post.getCreator().getId() != accountId) {
+            HistoryMessage historyMessage1 = new HistoryMessage(post.getCreator(), floor, false, true);
+            historyMessageMapper.insertSelective(historyMessage1);
+        }
+        // 如果回复的那层楼的帐号是accountId的话就不用提醒
+        if (replyFloor.getAccount().getId() != post.getCreator().getId()) {
+            HistoryMessage historyMessage2 = new HistoryMessage(replyFloor.getAccount(), floor, false, false);
+            historyMessageMapper.insertSelective(historyMessage2);
+        }
         return true;
     }
 
 
-    public boolean hasNewMessage(int accountId) {
-        boolean result = historyMessageMapper.selectCountByNotChecked(accountId) > 0;
-        return result;
-    }
 
-    public List<ReplyData> getReplyDataByAccountId(int accountId) {
-        List<Floor> floors = floorMapper.selectByReply(accountId);
-        List<ReplyData> replyDatas = new ArrayList<ReplyData>();
-        for (Floor floor : floors) {
-            Post post = floor.getPost();
-            Account account = floor.getAccount();
-            ReplyData replyData = new ReplyData(post.getId(), post.getTitle(), account.getNickname(), DateTimeUtil.getDateTimeString(floor.getCreateTime()));
-            replyDatas.add(replyData);
-        }
-        return replyDatas;
-    }
+
+
 
     public List<FloorData> getAllFloorDatas(int postId) {
         List<Floor> floors = floorMapper.selectByPostId(postId);
@@ -200,7 +224,7 @@ public class PostServiceImpl implements PostService {
             Account replyAccount = isReply ? replyFloor.getAccount() : null;
             FloorData floorData = new FloorData(floor.getId(), account.getHeadImageUrl(), account.getNickname(),
                     DateTimeUtil.getDateTimeString(floor.getCreateTime()), floor.getDetail(),
-                    isReply, isReply ? replyAccount.getNickname() : null, replyFloor.getId());
+                    isReply, isReply == true ? replyAccount.getNickname() : null, isReply == true ? replyFloor.getId() : null);
             floorDatas.add(floorData);
         }
         return floorDatas;

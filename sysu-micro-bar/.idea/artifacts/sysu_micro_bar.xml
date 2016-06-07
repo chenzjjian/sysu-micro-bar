@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="sysu-micro-bar">
+    <output-path>$PROJECT_DIR$/out/artifacts/sysu_micro_bar</output-path>
+    <root id="archive" name="sysu-micro-bar.war">
+      <element id="artifact" artifact-name="sysu-micro-bar:war exploded" />
+    </root>
+  </artifact>
+</component>

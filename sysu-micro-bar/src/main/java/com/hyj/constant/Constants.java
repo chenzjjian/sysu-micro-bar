@@ -45,7 +45,7 @@ public class Constants {
     /**
      *  帖子标签
      */
-    public static final String[] POST_TAGS = new String[]{"已删除", "学习", "情感", "游戏", "运动", "其他"};
+    public static final String[] POST_TAGS = new String[]{"学习", "运动", "交通", "美食", "运动", "其他"};
     /**
      * 文件类型: 1表示图片，0表示被删除
      */

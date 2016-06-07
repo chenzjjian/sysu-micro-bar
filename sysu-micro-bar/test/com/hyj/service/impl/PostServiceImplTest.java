@@ -28,12 +28,8 @@ public class PostServiceImplTest {
     }
     @Test
     public void getPostDataList() throws Exception {
-        logger.info(JSON.toJSONString(postService.getPostDataList()));
+        logger.info(JSON.toJSONString(postService.getPostDataList(0)));
     }
 
 
-    @Test
-    public void getReplyDataByAccountId() throws Exception {
-        logger.info(JSON.toJSONString(postService.getReplyDataByAccountId(1)));
-    }
 }

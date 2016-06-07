@@ -1,6 +1,9 @@
 package com.hyj.dao;
 
 import com.hyj.entity.HistoryMessage;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface HistoryMessageMapper {
     int deleteByPrimaryKey(Integer id);
@@ -16,4 +19,6 @@ public interface HistoryMessageMapper {
     int updateByPrimaryKeySelective(HistoryMessage record);
 
     int updateByPrimaryKey(HistoryMessage record);
+
+    List<HistoryMessage> selectAllData(Integer accountId, @Param("currentMessageNum")Integer currentMessageNum);
 }

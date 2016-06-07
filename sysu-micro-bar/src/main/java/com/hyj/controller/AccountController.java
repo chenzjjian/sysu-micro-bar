@@ -61,7 +61,7 @@ public class AccountController {
 
     @RequestMapping(value = "/doLogin", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String doLogin(@RequestBody Account account, ModelMap modelMap) {
+    public LoginData doLogin(@RequestBody Account account, ModelMap modelMap) {
         logger.info("登录操作");
         boolean result = false;
         try {
@@ -73,7 +73,7 @@ public class AccountController {
                 account.getPassword() == null || account.getPassword().trim().equals("")) {
             modelMap.addAttribute("erroMsg", Constants.LOGIN_FAIL_INVALID_INPUT);
             logger.error(Constants.LOGIN_FAIL_INVALID_INPUT);
-            return JSON.toJSONString(new LoginData(null, result, Constants.LOGIN_FAIL_INVALID_INPUT));
+            return new LoginData(null, result, Constants.LOGIN_FAIL_INVALID_INPUT);
         }
         account.setPassword(MD5.md5(account.getPassword()));
         /**
@@ -87,7 +87,7 @@ public class AccountController {
             // 如果数据库里没有对应记录，说明还没有注册
             modelMap.addAttribute("erroMsg", Constants.LOGIN_FAIL_ACCOUNT_NOT_REGISTERED);
             logger.error(Constants.LOGIN_FAIL_ACCOUNT_NOT_REGISTERED);
-            return JSON.toJSONString(new LoginData(null, result, Constants.LOGIN_FAIL_ACCOUNT_NOT_REGISTERED));
+            return new LoginData(null, result, Constants.LOGIN_FAIL_ACCOUNT_NOT_REGISTERED);
         } else {
             logger.info(accountInDatabase.getPassword());
             logger.info(password);
@@ -96,12 +96,12 @@ public class AccountController {
                 modelMap.addAttribute("success", Constants.LOGIN_SUCCESS);
                 logger.info(Constants.LOGIN_SUCCESS);
                 result = true;
-                return JSON.toJSONString(new LoginData(accountInDatabase, result, Constants.LOGIN_SUCCESS));
+                return new LoginData(accountInDatabase, result, Constants.LOGIN_SUCCESS);
             } else {
                 // 否则登录失败
                 modelMap.addAttribute("erroMsg", Constants.LOGIN_FAIL_PASSWORD_ERROR);
                 logger.error(Constants.LOGIN_FAIL_PASSWORD_ERROR);
-                return JSON.toJSONString(new LoginData(null, result, Constants.LOGIN_FAIL_PASSWORD_ERROR));
+                return new LoginData(null, result, Constants.LOGIN_FAIL_PASSWORD_ERROR);
             }
         }
     }
@@ -115,12 +115,12 @@ public class AccountController {
      */
     @RequestMapping(value = "/doRegister", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String doRgister(@RequestBody Account account, ModelMap modelMap) {
+    public RegisterData doRgister(@RequestBody Account account, ModelMap modelMap) {
         logger.info("doRegister" + JSON.toJSONString(account));
         boolean result = false;
         if (StringUtils.isBlank(account.getStuNo())) {
 //            throw new NullPointerException("学号不能为空");
-            return JSON.toJSONString(new RegisterData(null, result, Constants.REGISTER_FAIL_INVALID_INPUT));
+            return new RegisterData(null, result, Constants.REGISTER_FAIL_INVALID_INPUT);
         }
         /*密码进行一次MD5的转换*/
         account.setPassword(MD5.md5(account.getPassword()));
@@ -129,18 +129,18 @@ public class AccountController {
         if (account.getId() == null) {
             result = accountService.register(account);
             account = accountService.getAccountByStuNo(account.getStuNo());
-            return result ? JSON.toJSONString(new RegisterData(account, result, Constants.REGISTER_SUCCESS))
-                          : JSON.toJSONString(new RegisterData(account, result, Constants.REGISTER_FAIL_ACCOUNT_REGISTERED));
+            return result ? new RegisterData(account, result, Constants.REGISTER_SUCCESS)
+                          : new RegisterData(account, result, Constants.REGISTER_FAIL_ACCOUNT_REGISTERED);
         } else {
             logger.info("学号已经被注册");
 //            throw new NullPointerException("学号已经被注册");
-            return JSON.toJSONString(new RegisterData(null, result, Constants.REGISTER_FAIL_ACCOUNT_REGISTERED));
+            return new RegisterData(null, result, Constants.REGISTER_FAIL_ACCOUNT_REGISTERED);
         }
     }
 
     @RequestMapping(value = "/index", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String testJson() {
+    public List<Account> testJson() {
         List<Account> result = new ArrayList<Account>();
         Account account1 = new Account();
         account1.setId(2);
@@ -159,7 +159,7 @@ public class AccountController {
         account2.setHeadImageUrl("www.baidu.com");
         result.add(account2);
         System.out.println("生成json字符串成功" + JSON.toJSONString(result));
-        return JSON.toJSONString(result);
+        return result;
     }
 
 
