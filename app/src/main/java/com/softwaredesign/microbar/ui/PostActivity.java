@@ -8,17 +8,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import com.loopj.android.http.RequestParams;
@@ -42,15 +43,13 @@ public class PostActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURE = 0;
     private static final int TAKE_PHOTO = 1;
-    private static final String UPLOAD_URL = "http://115.28.245.65:8080/sysu-micro-bar/createPost";
+    private static final String UPLOAD_URL = "http://119.29.178.68:8080/sysu-micro-bar/createPost";
 
+    private Toolbar postToolbar;
     private EditText postTitle;
     private Spinner postTagSpinner;
     private int postTag;
     private EditText content;
-    private ImageButton select_picture;
-    private ImageButton take_photo;
-    private Button commit;
     // Key: uuid, Value: path
     private HashMap<String, String> pictures;
 
@@ -64,13 +63,42 @@ public class PostActivity extends AppCompatActivity {
         setListener();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.post_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.select_picture:
+                getImageFromGallery();
+                break;
+            case R.id.take_photo:
+                File file = createPhotoFile();
+                Log.i("PostActivity", "photo's path is " + file);
+                outputFileUri = Uri.fromFile(file);
+                Log.i("PostActivity", "FileUri is " + outputFileUri);
+                takePhoto(outputFileUri);
+                break;
+            case R.id.commit:
+                uploadPost();
+                Log.i("PostActivity", "" + content.getText());
+                Intent intent = new Intent(PostActivity.this, FloorActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return true;
+    }
+
     public void init() {
-        select_picture = (ImageButton) findViewById(R.id.select_picture);
-        take_photo = (ImageButton) findViewById(R.id.take_photo);
+        postToolbar = (Toolbar) findViewById(R.id.postToolbar);
+        postToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        setSupportActionBar(postToolbar);
         postTitle = (EditText)findViewById(R.id.postTitle);
         postTagSpinner = (Spinner) findViewById(R.id.postTag);
         content = (EditText) findViewById(R.id.content);
-        commit = (Button) findViewById(R.id.commit);
         pictures = new HashMap<>();
     }
 
@@ -88,31 +116,6 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // Another interface callback
-            }
-        });
-        select_picture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getImageFromGallery();
-            }
-        });
-        take_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                File file = createPhotoFile();
-                Log.i("PostActivity", "photo's path is " + file);
-                outputFileUri = Uri.fromFile(file);
-                Log.i("PostActivity", "FileUri is " + outputFileUri);
-                takePhoto(outputFileUri);
-            }
-        });
-        commit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadPost();
-                Log.i("PostActivity", "" + content.getText());
-                Intent intent = new Intent(PostActivity.this, FloorActivity.class);
-                startActivity(intent);
             }
         });
     }
@@ -159,7 +162,7 @@ public class PostActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         UploadUtil.addTitleAndTag(params, 13331095, postTitle, postTag);
         UploadUtil.addContent(params, content, pictures);
-        UploadUtil.sendRequest(UPLOAD_URL, params);
+        UploadUtil.sendMultipartRequest(UPLOAD_URL, params);
     }
 
     @Override
