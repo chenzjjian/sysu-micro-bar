@@ -43,11 +43,7 @@ public class PostActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURE = 0;
     private static final int TAKE_PHOTO = 1;
-<<<<<<< HEAD
-    private static final String UPLOAD_URL = "http://172.18.40.194:8080/sysu-micro-bar/createPost";
-=======
     private static final String UPLOAD_URL = "http://119.29.178.68:8080/sysu-micro-bar/createPost";
->>>>>>> fe7ac7940d1539a134c02790186e7fc12b60224e
 
     private Toolbar postToolbar;
     private EditText postTitle;
@@ -122,34 +118,6 @@ public class PostActivity extends AppCompatActivity {
                 // Another interface callback
             }
         });
-<<<<<<< HEAD
-        select_picture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getImageFromGallery();
-            }
-        });
-        take_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                File file = createPhotoFile();
-                Log.i("ImageAndTest", "photo's path is " + file);
-                outputFileUri = Uri.fromFile(file);
-                Log.i("ImageAndText", "FileUri is " + outputFileUri);
-                takePhoto(outputFileUri);
-            }
-        });
-        commit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadPost();
-                Log.i("ImageAndText", "" + content.getText());
-                Intent intent = new Intent(PostActivity.this, FloorActivity.class);
-                startActivity(intent);
-            }
-        });
-=======
->>>>>>> fe7ac7940d1539a134c02790186e7fc12b60224e
     }
 
     // 从系统相册中获取图片
@@ -203,10 +171,10 @@ public class PostActivity extends AppCompatActivity {
 
         // 返回不成功时的处理
         if (resultCode != RESULT_OK) {
-            Log.d("ImageAndText", "canceled or other exception!");
+            Log.d("PostActivity", "canceled or other exception!");
             switch (requestCode) {
                 case SELECT_PICTURE:
-                    Log.i("ImageAndText", "don't pick any picture");
+                    Log.i("PostActivity", "don't pick any picture");
                     break;
                 case TAKE_PHOTO:
                     deleteEmptyPhotoPath(outputFileUri);
@@ -220,7 +188,7 @@ public class PostActivity extends AppCompatActivity {
         switch (requestCode) {
             case SELECT_PICTURE:
                 Uri contentUri = data.getData();
-                Log.i("ImageAndText", "Uri: " + contentUri);
+                Log.i("PostActivity", "Uri: " + contentUri);
                 insertImageIntoText(content, contentUri, pictures);
                 break;
 
@@ -243,11 +211,8 @@ public class PostActivity extends AppCompatActivity {
     public boolean deleteEmptyPhotoPath(Uri uri) {
         String photoPath = getRealPathFromURI(uri);
         File f = new File(photoPath);
-        Log.i("ImageAndText", "photo path is " + photoPath);
-        if (f.exists()) {
-            return f.delete();
-        }
-        return false;
+        Log.i("PostActivity", "photo path is " + photoPath);
+        return f.exists() && f.delete();
     }
 
     /**
@@ -269,8 +234,8 @@ public class PostActivity extends AppCompatActivity {
         // 返回图片的宽度为EditText的宽度减去16或以上,
         // 否则在EditText显示一张图片时会出现两张相同的图片
         Bitmap bitmap = ImageUtil.decodeSampledBitmapFromFile(path, editText.getWidth() - 16, editText.getWidth());
-        Log.i("ImageAndText", "" + bitmap.getWidth());
-        Log.i("ImageAndText", "" + bitmap.getHeight());
+        Log.i("PostActivity", "" + bitmap.getWidth());
+        Log.i("PostActivity", "" + bitmap.getHeight());
 
         // 利用ImageSpan和SpannableString来显示图片
         String id = "[img=" + UUID.randomUUID() + "]";
@@ -288,20 +253,20 @@ public class PostActivity extends AppCompatActivity {
 
         // 将图片的标识和路径存储为Map,用于上传到服务器
         spanStrings_pathes.put(id, path);
-        Log.i("ImageAndText", id);
+        Log.i("PostActivity", id);
     }
 
     /**
      * 获取Uri对应的真实路径
      *
      * @param contentUri 需要获取真正路径的Uri
-     * @return
+     * @return 图片的真实路径
      */
     public String getRealPathFromURI(Uri contentUri) {
         String path;
         Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
         if (cursor == null) {
-            Log.i("ImageAndText", "cursor is null");
+            Log.i("PostActivity", "cursor is null");
             path = contentUri.getPath();
         } else {
             cursor.moveToFirst();
@@ -309,7 +274,7 @@ public class PostActivity extends AppCompatActivity {
             path = cursor.getString(idx);
             cursor.close();
         }
-        Log.i("ImageAndText", "path: " + path);
+        Log.i("PostActivity", "path: " + path);
         return path;
     }
 }
