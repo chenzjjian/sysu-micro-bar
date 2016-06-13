@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">MicroBar</string>
 
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
     <string-array name="postTags">
         <item>学习</item>
         <item>运动</item>
