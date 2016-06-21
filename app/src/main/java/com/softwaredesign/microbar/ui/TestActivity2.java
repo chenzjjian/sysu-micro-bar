@@ -23,9 +23,9 @@ public class TestActivity2 extends AppCompatActivity {
 
         TextView eT = (TextView) findViewById(R.id.test2_et);
         Intent intent = getIntent();
-        String s = intent.getStringExtra("postId");
+        int postId = intent.getIntExtra("postId", 0);
 
-        eT.setText(s);
+        eT.setText(Integer.toString(postId));
 
         Button button = (Button) findViewById(R.id.return_main);
         button.setOnClickListener(new View.OnClickListener() {

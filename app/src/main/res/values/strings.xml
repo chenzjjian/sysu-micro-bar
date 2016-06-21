@@ -2,7 +2,9 @@
     <string name="app_name">MicroBar</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>
 
     <string-array name="postTags">
         <item>学习</item>

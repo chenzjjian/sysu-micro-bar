@@ -49,7 +49,7 @@ public class PostActivity extends AppCompatActivity {
     private EditText postTitle;
     private Spinner postTagSpinner;
     private int postTag;
-    private EditText content;
+    private EditText postContent;
     // Key: uuid, Value: path
     private HashMap<String, String> pictures;
 
@@ -84,7 +84,7 @@ public class PostActivity extends AppCompatActivity {
                 break;
             case R.id.commit:
                 uploadPost();
-                Log.i("PostActivity", "" + content.getText());
+                Log.i("PostActivity", "" + postContent.getText());
                 Intent intent = new Intent(PostActivity.this, FloorActivity.class);
                 startActivity(intent);
                 break;
@@ -98,7 +98,7 @@ public class PostActivity extends AppCompatActivity {
         setSupportActionBar(postToolbar);
         postTitle = (EditText)findViewById(R.id.postTitle);
         postTagSpinner = (Spinner) findViewById(R.id.postTag);
-        content = (EditText) findViewById(R.id.content);
+        postContent = (EditText) findViewById(R.id.postContent);
         pictures = new HashMap<>();
     }
 
@@ -161,7 +161,7 @@ public class PostActivity extends AppCompatActivity {
     public void uploadPost() {
         RequestParams params = new RequestParams();
         UploadUtil.addTitleAndTag(params, 13331095, postTitle, postTag);
-        UploadUtil.addContent(params, content, pictures);
+        UploadUtil.addContent(params, postContent, pictures);
         UploadUtil.sendMultipartRequest(UPLOAD_URL, params);
     }
 
@@ -189,11 +189,11 @@ public class PostActivity extends AppCompatActivity {
             case SELECT_PICTURE:
                 Uri contentUri = data.getData();
                 Log.i("PostActivity", "Uri: " + contentUri);
-                insertImageIntoText(content, contentUri, pictures);
+                insertImageIntoText(postContent, contentUri, pictures);
                 break;
 
             case TAKE_PHOTO:
-                insertImageIntoText(content, outputFileUri, pictures);
+                insertImageIntoText(postContent, outputFileUri, pictures);
                 // 发送Media Scanner更新通知
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, outputFileUri));
                 break;

@@ -63,7 +63,7 @@
             </LinearLayout>
             <!--作为内容输入框,可复用-->
             <EditText
-                android:id="@+id/content"
+                android:id="@+id/postContent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
