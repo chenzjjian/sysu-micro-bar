@@ -10,6 +10,7 @@ import com.hyj.service.HistoryMessageService;
 import com.hyj.util.DateTimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/6/4 0004.
  */
+@Service("historyMessage")
 public class HistoryMessageServiceImpl implements HistoryMessageService {
     @Resource
     private HistoryMessageMapper historyMessageMapper;
@@ -37,18 +39,19 @@ public class HistoryMessageServiceImpl implements HistoryMessageService {
         return historyDatas;
     }*/
 
-
     public List<HistoryData> loadMessage(Integer accountId, Integer currentMessageNum) {
         List<HistoryData> historyDatas = new ArrayList<HistoryData>();
         List<HistoryMessage> historyMessages = historyMessageMapper.selectAllData(accountId, currentMessageNum);
         for (HistoryMessage historyMessage : historyMessages) {
             // 查看消息的时候把没有checked的全都设置为checked
-            if (!historyMessage.getIsChecked())
+            if (!historyMessage.getIsChecked()) {
                 historyMessage.setIsChecked(true);
+                historyMessageMapper.updateByPrimaryKey(historyMessage);
+            }
             Floor floor = historyMessage.getFloor();
             Account account = floor.getAccount();
             Post post = floor.getPost();
-            HistoryData historyData = new HistoryData(post.getId(), post.getTitle(), account.getNickname(), DateTimeUtil.getDateTimeString(floor.getCreateTime()));
+            HistoryData historyData = new HistoryData(floor.getId(), post.getTitle(), account.getNickname(), DateTimeUtil.getDateTimeString(floor.getCreateTime()));
             historyDatas.add(historyData);
         }
         return historyDatas;

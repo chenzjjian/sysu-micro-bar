@@ -1,6 +1,7 @@
 package com.hyj.service;
 
 import com.hyj.entity.Account;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by Administrator on 2016/5/14 0014.
@@ -11,12 +12,12 @@ public interface AccountService {
      * @param accountId
      * @return
      */
-    public Account getAccountById(int accountId);
+    Account getAccountById(int accountId);
     /**
      * 获取校验码
      * @return
      */
-    public String getCheckCode();
+    String getCheckCode();
     /**
      * 注册某个账户，将查重逻辑写在这里
      * 如果学号重复，就返回false
@@ -24,11 +25,15 @@ public interface AccountService {
      * @param account
      * @return
      */
-    public boolean register(Account account);
+    boolean register(Account account);
     /**
      * 通过学号来查找对应的账号
      * @param stuNo
      * @return
      */
-    public Account getAccountByStuNo(String stuNo);
+    Account getAccountByStuNo(String stuNo);
+
+    boolean uploadHeadImage(int accountId, MultipartFile file, String rootPath, String contextPath);
+
+    boolean modifyPersonalInfo(int accountId, String nickname, String password);
 }

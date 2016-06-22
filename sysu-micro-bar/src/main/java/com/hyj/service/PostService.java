@@ -14,15 +14,15 @@ public interface PostService {
      * 获取数据库中按创建时间排序的所有post数据
      * @return
      */
-    public List<PostData> getPostDataList(int currentPostNum);
+    List<PostData> getPostDataList(int currentPostNum);
 
     /**
      * 根据标题关键字和标签进行搜索
      * @param title
      * @param tag
-     * @return
+s     * @return
      */
-    public List<PostData> searchPostData(String title, int tag);
+    List<PostData> searchPostData(String title, Integer tag);
 
     /**
      *  回复
@@ -35,7 +35,7 @@ public interface PostService {
      * @param contextPath
      * @return
      */
-    public boolean createReply(int accountId, int postId, int replyFloorId, String detail, MultipartFile[] files, String rootPath, String contextPath);
+    boolean createReply(int accountId, int postId, int replyFloorId, String detail, MultipartFile[] files, String rootPath, String contextPath);
 
     /**
      * 盖楼
@@ -47,7 +47,7 @@ public interface PostService {
      * @param contextPath
      * @return
      */
-    public boolean createFloor(int accountId, int postId, String detail, MultipartFile[] files, String rootPath, String contextPath);
+    boolean createFloor(int accountId, int postId, String detail, MultipartFile[] files, String rootPath, String contextPath);
     /**
      * 用户accountId创建帖子，并上传文件到根路径下
      * 创建帖子,rootPath表示根路径(实际地址),contextPath表示上下文路径(url地址)
@@ -60,13 +60,21 @@ public interface PostService {
      * @param contextPath
      * @return
      */
-    public boolean createPost(int accountId, String title, int tag, String detail, MultipartFile[] files, String rootPath, String contextPath);
+    boolean createPost(int accountId, String title, int tag, String detail, MultipartFile[] files, String rootPath, String contextPath);
     /**
      * 根据帖子id获取所有楼层
      * @param postId
      * @return
      */
-    public List<FloorData> getAllFloorDatas(int postId);
+    List<FloorData> getAllFloorDatas(int postId);
+
+    /**
+     * 根据账户id获取该账户发的帖
+     * @param accountId
+     * @return
+     */
+    List<PostData> getPostByMyself(int accountId);
 
 
+    List<PostData> getRecentPosts(int[] postIds);
 }

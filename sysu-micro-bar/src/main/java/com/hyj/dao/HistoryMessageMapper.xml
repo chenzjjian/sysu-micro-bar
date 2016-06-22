@@ -3,21 +3,21 @@
 <mapper namespace="com.hyj.dao.HistoryMessageMapper" >
   <resultMap id="BaseResultMap" type="com.hyj.entity.HistoryMessage" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="account_id" property="account.id" jdbcType="INTEGER" />
-    <result column="floor_id" property="floor.id" jdbcType="INTEGER" />
     <result column="is_checked" property="isChecked" jdbcType="BIT" />
     <result column="is_comment" property="isComment" jdbcType="BIT" />
+    <association property="account" column="account_id" select="com.hyj.dao.AccountMapper.selectByPrimaryKey" />
+    <association property="floor" column="floor_id" select="com.hyj.dao.FloorMapper.selectByPrimaryKey" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, account_id, floor_id, is_checked, is_comment
   </sql>
 
-  <select id="selectAllData" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectAllData" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from history_message
-    where account_id = #{account.id,jdbcType=INTEGER}
-    order by create_time desc, id
+    where account_id = #{accountId,jdbcType=INTEGER}
+    order by id desc
     limit #{currentMessageNum, jdbcType=INTEGER}, 10
   </select>
   <select id="selectCountByNotChecked" resultType="java.lang.Integer" parameterType="java.lang.Integer" >

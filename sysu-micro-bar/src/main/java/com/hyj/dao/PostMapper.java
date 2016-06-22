@@ -22,5 +22,5 @@ public interface PostMapper {
 
     List<Post> selectAllPost(Integer currentPostNum);
 
-
+    List<Post> selectPostByCreator(Integer creatorId);
 }

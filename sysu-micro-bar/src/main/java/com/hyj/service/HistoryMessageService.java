@@ -13,7 +13,7 @@ public interface HistoryMessageService {
      * @param accountId
      * @return
      */
-    public boolean checkMessage(Integer accountId);
+    boolean checkMessage(Integer accountId);
 
     /**
      * 查看历史信息/（评论/回复）
@@ -21,6 +21,6 @@ public interface HistoryMessageService {
      * @param currentMessageNum
      * @return
      */
-    public List<HistoryData> loadMessage(Integer accountId, Integer currentMessageNum);
+    List<HistoryData> loadMessage(Integer accountId, Integer currentMessageNum);
 
 }

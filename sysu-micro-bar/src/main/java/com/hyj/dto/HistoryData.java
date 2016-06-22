@@ -12,8 +12,8 @@ public class HistoryData {
     public HistoryData() {
     }
 
-    public HistoryData(int postId, String postTitle, String who, String createTime) {
-        this.floorId = postId;
+    public HistoryData(int floorId, String postTitle, String who, String createTime) {
+        this.floorId = floorId;
         this.postTitle = postTitle;
         this.who = who;
         this.createTime = createTime;

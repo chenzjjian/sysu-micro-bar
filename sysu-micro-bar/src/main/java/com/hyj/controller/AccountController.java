@@ -59,6 +59,12 @@ public class AccountController {
     }
 
 
+    /**
+     * 登录操作
+     * @param account
+     * @param modelMap
+     * @return
+     */
     @RequestMapping(value = "/doLogin", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public LoginData doLogin(@RequestBody Account account, ModelMap modelMap) {
@@ -138,29 +144,6 @@ public class AccountController {
         }
     }
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public List<Account> testJson() {
-        List<Account> result = new ArrayList<Account>();
-        Account account1 = new Account();
-        account1.setId(2);
-        account1.setRegisterTime(new Date());
-        account1.setNickname("666");
-        account1.setStuNo("1341234");
-        account1.setPassword("124234");
-        account1.setHeadImageUrl(null);
-        result.add(account1);
-        Account account2 = new Account();
-        account2.setRegisterTime(new Date());
-        account2.setId(2434);
-        account2.setNickname("234254");
-        account2.setStuNo("36423sdfsdf");
-        account2.setPassword("fasf2342sdff");
-        account2.setHeadImageUrl("www.baidu.com");
-        result.add(account2);
-        System.out.println("生成json字符串成功" + JSON.toJSONString(result));
-        return result;
-    }
 
 
 

@@ -16,7 +16,11 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-mybatis.xml"})
 public class PostServiceImplTest {
-
+    @Test
+    public void searchPostData() throws Exception {
+        logger.info(JSON.toJSONString(postService.searchPostData("咯", null)));
+        logger.info(JSON.toJSONString(postService.searchPostData("咯", null).size()));
+    }
 
 
     private static Logger logger = Logger.getLogger(PostServiceImplTest.class);

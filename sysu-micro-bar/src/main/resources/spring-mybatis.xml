@@ -69,8 +69,8 @@
             <tx:method name="check*" read-only="true"/>
             <!-- 申明以get开头的方法为只读事务 -->
             <tx:method name="get*" read-only="true"/>
-            <!-- 申明以load开头的方法为只读事务 -->
-            <tx:method name="load*" read-only="true"/>
+<!--            &lt;!&ndash; 申明以load开头的方法为只读事务 &ndash;&gt;
+            <tx:method name="load*" read-only="true"/>-->
             <!-- 申明以query开头的方法为只读事务 -->
             <tx:method name="query*" read-only="true"/>
             <!-- 申明以find开头的方法为只读事务 -->

@@ -20,5 +20,5 @@ public interface HistoryMessageMapper {
 
     int updateByPrimaryKey(HistoryMessage record);
 
-    List<HistoryMessage> selectAllData(Integer accountId, @Param("currentMessageNum")Integer currentMessageNum);
+    List<HistoryMessage> selectAllData(@Param("accountId")Integer accountId, @Param("currentMessageNum")Integer currentMessageNum);
 }

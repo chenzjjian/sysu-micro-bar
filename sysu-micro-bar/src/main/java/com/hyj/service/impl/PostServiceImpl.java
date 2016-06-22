@@ -1,14 +1,13 @@
 package com.hyj.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.hyj.constant.Constants;
 import com.hyj.dao.*;
 import com.hyj.dto.FloorData;
-import com.hyj.dto.HistoryData;
 import com.hyj.dto.PostData;
 import com.hyj.entity.*;
 import com.hyj.service.PostService;
 import com.hyj.util.DateTimeUtil;
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,30 +43,29 @@ public class PostServiceImpl implements PostService {
     private static final Logger logger = LoggerFactory
             .getLogger(PostServiceImpl.class);
 
+
     public List<PostData> getPostDataList(int currentPostNum) {
-        List<Post> posts = postMapper.selectAllPost(currentPostNum);
-        List<PostData> postDatas = new ArrayList<PostData>();
-        for (Post post : posts) {
-            PostData postData = new PostData(post.getId(),
-                    post.getTitle(), Constants.POST_TAGS[post.getTag()],
-                    DateTimeUtil.getDateTimeString(new Date()), floorMapper.selectCountByPostId(post.getId()));
-            postDatas.add(postData);
-        }
-        return postDatas;
+        return transformPostsToPostDatas(postMapper.selectAllPost(currentPostNum));
     }
 
+    public List<PostData> searchPostData(String title, Integer tag) {
+        return transformPostsToPostDatas(postMapper.searchByTitleAndTag(title, tag));
+    }
 
+    public List<PostData> getPostByMyself(int accountId) {
+        return transformPostsToPostDatas(postMapper.selectPostByCreator(accountId));
+    }
 
-    public List<PostData> searchPostData(String title, int tag) {
-        List<Post> posts = postMapper.searchByTitleAndTag(title, tag);
-        List<PostData> postDatas = new ArrayList<PostData>();
-        for (Post post : posts) {
-            PostData postData = new PostData(post.getId(),
-                    post.getTitle(), Constants.POST_TAGS[post.getTag()],
-                    DateTimeUtil.getDateTimeString(new Date()), floorMapper.selectCountByPostId(post.getId()));
-            postDatas.add(postData);
+    public List<PostData> getRecentPosts(int[] postIds) {
+        List<Post> posts = new ArrayList<Post>();
+        for (int postId : postIds) {
+            posts.add(postMapper.selectByPrimaryKey(postId));
         }
-        return postDatas;
+        return transformPostsToPostDatas(posts);
+    }
+
+    public List<FloorData> getAllFloorDatas(int postId) {
+        return transformFloorsToFloorDatas(floorMapper.selectByPostId(postId));
     }
 
 
@@ -145,9 +143,6 @@ public class PostServiceImpl implements PostService {
             String dirName = rootPath + "/post" + post.getId() + "/floor" + floor.getId();
             String fileBaseUrl = contextPath + "/post" + post.getId() + "/floor" + floor.getId() + "/";
             String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
-            for (String fileUrl : fileUrls) {
-                logger.info("134123431241324" + fileUrl);
-            }
             this.afterUploadFiles(fileUrls, detail, floor);
         }
         return true;
@@ -212,8 +207,18 @@ public class PostServiceImpl implements PostService {
 
 
 
-    public List<FloorData> getAllFloorDatas(int postId) {
-        List<Floor> floors = floorMapper.selectByPostId(postId);
+    private List<PostData> transformPostsToPostDatas(List<Post> posts) {
+        List<PostData> postDatas = new ArrayList<PostData>();
+        for (Post post : posts) {
+            PostData postData = new PostData(post.getId(),
+                    post.getTitle(), Constants.POST_TAGS[post.getTag()],
+                    DateTimeUtil.getDateTimeString(post.getCreateTime()), floorMapper.selectCountByPostId(post.getId()));
+            postDatas.add(postData);
+        }
+        return postDatas;
+    }
+
+    private List<FloorData> transformFloorsToFloorDatas(List<Floor> floors) {
         List<FloorData> floorDatas = new ArrayList<FloorData>();
         for (Floor floor : floors) {
             /*楼层id--->账号*/
@@ -229,7 +234,6 @@ public class PostServiceImpl implements PostService {
         }
         return floorDatas;
     }
-
 
 
 }
