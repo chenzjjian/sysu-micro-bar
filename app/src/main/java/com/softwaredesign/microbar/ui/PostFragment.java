@@ -12,16 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.softwaredesign.microbar.R;
 import com.softwaredesign.microbar.adapter.PostAdapter;
-import com.softwaredesign.microbar.model.mainObject;
-import com.squareup.okhttp.Request;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
+import com.softwaredesign.microbar.model.Post;
+import com.softwaredesign.microbar.util.PostUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,16 +26,29 @@ import java.util.List;
  */
 // 与帖子有关的Fragment
 public class PostFragment extends Fragment {
-    private final String getMoreURL = "http://119.29.178.68:8080/sysu-micro-bar/getPostList";
+
+    public enum POSTTYPE {
+        HOMEPAGE, HISTORY, MYPOST, SEARCH
+    }
 
     private FragmentActivity fragmentActivity;
     private SwipeRefreshLayout mRefreshLayout;
     private LoadMoreListView mLoadMoreListView;
-    private PostAdapter mAdapter;
-    private List<mainObject> mList = new ArrayList<>();
-    private int postType;
+    private PostAdapter postAdapter;
+    private List<Post> posts = new ArrayList<>();
+    private String title;
+    private int tag;
+    private POSTTYPE postType;
 
     public PostFragment() {
+    }
+
+    public static PostFragment getPostFragment(POSTTYPE key) {
+        Bundle arguments = new Bundle();
+        arguments.putSerializable("KEY", key);
+        PostFragment postFragment = new PostFragment();
+        postFragment.setArguments(arguments);
+        return postFragment;
     }
 
     @Nullable
@@ -49,7 +57,7 @@ public class PostFragment extends Fragment {
         View view = inflater.inflate(R.layout.main_page, container, false);
         Bundle arguments = getArguments();
         // 决定获取哪种数据(首页/最近看过/我发的帖)
-        postType = arguments.getInt("Key");
+        postType = (POSTTYPE) arguments.getSerializable("KEY");
         init(view);
         setListener();
         return view;
@@ -60,11 +68,25 @@ public class PostFragment extends Fragment {
         // 主页
         mRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.mainPage);
         mLoadMoreListView = (LoadMoreListView) v.findViewById(R.id.mainListView);
-        mAdapter = new PostAdapter(fragmentActivity, mList);
-        mLoadMoreListView.setAdapter(mAdapter);
-        // 获取显示数据
-        lookForMore(0);
-        //checkForNew(accountId);
+        postAdapter = new PostAdapter(fragmentActivity, posts);
+        Log.d("PostFragment", "123");
+        mLoadMoreListView.setAdapter(postAdapter);
+        switch (postType) {
+            case HOMEPAGE:
+                PostUtil.lookForMore(posts, 0);
+                postAdapter.notifyDataSetChanged();
+                break;
+            case HISTORY:
+                break;
+            case MYPOST:
+                break;
+            case SEARCH:
+                PostUtil.searchPost(posts, title, tag);
+                postAdapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
+        }
     }
 
     public void setListener() {
@@ -101,9 +123,8 @@ public class PostFragment extends Fragment {
         mLoadMoreListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mainObject obj = mList.get(position);
-                Log.i("444111111", ""+obj.getPostId());
-                int postId = obj.getPostId();
+                Post post = posts.get(position);
+                int postId = post.getPostId();
 
                 Bundle data = new Bundle();
                 data.putInt("postId", postId);
@@ -115,53 +136,11 @@ public class PostFragment extends Fragment {
         });
     }
 
-    // 查看更多帖子
-    public void lookForMore(int postTotal) {
-        OkHttpUtils
-                .post()
-                .url(getMoreURL)
-                .addParams("currentPostNum", Integer.toString(postTotal))
-                .build()
-                .connTimeOut(20000)
-                .execute(new StringCallback() {
-
-                    @Override
-                    public void onError(Request request, Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(fragmentActivity, "获取新帖子失败，请检查网络或重新获取",
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onResponse(String response) {
-                        Gson gson = new Gson();
-                        List<mainObject> mainobject = gson.fromJson(response, new TypeToken<List<mainObject>>() {}.getType());
-                        mList.addAll(mainobject);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
+    public void setSearchTitle(String searchTitle) {
+        title = searchTitle;
     }
 
-    public void refreshForNew(int lastPostId) {
-        OkHttpUtils
-                .post()
-                .addParams("lastPostId", Integer.toString(lastPostId))
-                .build()
-                .connTimeOut(20000)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Request request, Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(fragmentActivity, "刷新失败", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onResponse(String response) {
-                        Gson gson = new Gson();
-                        List<mainObject> mainObjects = gson.fromJson(response, new TypeToken<List<mainObject>>() {}.getType());
-                        mList.addAll(0, mainObjects);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
+    public void setSearchTag(int searchTag) {
+        tag = searchTag;
     }
 }

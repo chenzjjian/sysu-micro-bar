@@ -1,103 +1,99 @@
 package com.softwaredesign.microbar.ui;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.softwaredesign.microbar.R;
-import com.squareup.okhttp.Request;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
 
+public class SearchActivity extends AppCompatActivity {
+    private static final int SEARCH = 3;
 
-public class SearchActivity extends AppCompatActivity implements OnClickListener, OnItemSelectedListener {
-    private Spinner type;
-    private EditText title;
-    private ArrayAdapter<String> type_adapter;
-    private String[] typeList = {"学习", "运动", "交通", "美食", "娱乐", "其他"};
-    private Integer search_type = 0;
-    private String search_title;
-    private ImageButton goBack, goSearch;
-    private String search_url = "http://119.29.178.68:8080/sysu-micro-bar/searchPostList";
+    private Toolbar searchToolbar;
+    private Spinner searchType;
+    private EditText searchTitle;
+    private String title;
+    private Integer tag = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        title = (EditText) findViewById(R.id.search_title);
-        type = (Spinner) findViewById(R.id.search_type);
-        goBack = (ImageButton) findViewById(R.id.goBack);
-        goSearch = (ImageButton) findViewById(R.id.goSearch);
+        searchToolbar = (Toolbar) findViewById(R.id.searchToolbar);
+        searchToolbar.inflateMenu(R.menu.search_menu);
+        searchToolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_white_24dp);
+        setSupportActionBar(searchToolbar);
+        TextView customTitle = (TextView) searchToolbar.findViewById(R.id.customTitle);
+        if (customTitle != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            customTitle.setText("搜索帖子");
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        goBack.setOnClickListener(this);
-        goSearch.setOnClickListener(this);
+        searchTitle = (EditText) findViewById(R.id.search_title);
+        searchType = (Spinner) findViewById(R.id.search_type);
 
-        type_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeList);
-        type_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        type.setAdapter(type_adapter);
-        type.setOnItemSelectedListener(this);
+        final String[] postTags = getResources().getStringArray(R.array.postTags);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, postTags);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        searchType.setAdapter(adapter);
+        searchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                tag = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.searchPost:
+                doSearch();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void doSearch() {
-        search_title = title.getText().toString();
-        OkHttpUtils.post().url(search_url).
-                addParams("title", search_title)
-                .addParams("tag", Integer.toString(search_type)).build()
-                .execute(new StringCallback() {
-
-                    @Override
-                    public void onResponse(String result) {
-                        Log.i("user", result);
-//				Toast.makeText(Search_Activity.this, "搜索成功", Toast.LENGTH_SHORT).show();
-                        if (result.equals("[]")) {
-                            Toast.makeText(SearchActivity.this, "没有匹配的结果", Toast.LENGTH_LONG).show();
-                        } else {
-                            Intent intent = new Intent(SearchActivity.this, SearchResultActivity.class);
-                            intent.putExtra("result", result);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Request request, Exception e) {
-                        Toast.makeText(SearchActivity.this, "搜索失败", Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    }
-                });
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.goBack:
-                finish();
-                break;
-            case R.id.goSearch:
-                doSearch();
-                break;
+        title = searchTitle.getText().toString();
+        if (title.isEmpty()) {
+            Toast.makeText(SearchActivity.this, "标题不能为空", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(SearchActivity.this, SearchResultActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("title", title);
+            bundle.putInt("tag", tag);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            finish();
         }
-
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        search_type = position;
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
     }
 }

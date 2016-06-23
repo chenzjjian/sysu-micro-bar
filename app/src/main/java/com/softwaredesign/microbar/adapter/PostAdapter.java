@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.softwaredesign.microbar.R;
-import com.softwaredesign.microbar.model.mainObject;
+import com.softwaredesign.microbar.model.Post;
 
 import java.util.List;
 
@@ -18,13 +18,13 @@ import java.util.List;
 public class PostAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<mainObject> posts;
+    private List<Post> posts;
     private LayoutInflater mInflater;
 
     public PostAdapter() {
     }
 
-    public PostAdapter(Context mContext, List<mainObject> posts) {
+    public PostAdapter(Context mContext, List<Post> posts) {
         this.mContext = mContext;
         this.posts = posts;
         mInflater = LayoutInflater.from(mContext);
@@ -53,26 +53,23 @@ public class PostAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.commentTitle = (TextView) convertView.findViewById(R.id.commentTitle);
             viewHolder.commentNum = (TextView) convertView.findViewById(R.id.commentNum);
-            viewHolder.postId = (TextView) convertView.findViewById(R.id.postId);
             viewHolder.commentTime = (TextView) convertView.findViewById(R.id.commentTime);
             viewHolder.commentStyle = (TextView) convertView.findViewById(R.id.commentStyle);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        mainObject obj = (mainObject) getItem(position);
-        viewHolder.commentTitle.setText(obj.getTitle());
-        viewHolder.commentNum.setText(Integer.toString(obj.getCommentNum()));
-        viewHolder.postId.setText(Integer.toString(obj.getPostId()));
-        viewHolder.commentTime.setText(obj.getCreateTime());
-        viewHolder.commentStyle.setText(obj.getTag());
+        Post post = (Post) getItem(position);
+        viewHolder.commentTitle.setText(post.getTitle());
+        viewHolder.commentNum.setText(Integer.toString(post.getCommentNum()));
+        viewHolder.commentTime.setText(post.getCreateTime());
+        viewHolder.commentStyle.setText(post.getTag());
         return convertView;
     }
 
     static class ViewHolder {
         private TextView commentTitle;
         private TextView commentNum;
-        private TextView postId;
         private TextView commentTime;
         private TextView commentStyle;
     }

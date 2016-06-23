@@ -2,11 +2,11 @@ package com.softwaredesign.microbar.ui;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,12 +25,13 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String checkNewURL = "http://119.29.178.68:8080/sysu-micro-bar/checkMessage";
 
     private static final int HOMEPAGE = 0;
     private static final int HISTORY = 1;
     private static final int MYPOST = 2;
 
-    private final String checkNewURL = "http://119.29.178.68:8080/sysu-micro-bar/checkMessage";
+    private PostFragment mainPage;
 
     private SharedPreferences sp;
     private int accountId;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         String stuNo = sp.getString("stuNo", "匿名");
         String pwd = sp.getString("PASSWORD", "");
         userName.setText(stuNo);
+        Log.d("MainActivity", "321");
     }
 
     @Override
@@ -76,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mainpage_search:
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
                 break;
             case R.id.mainpage_add:
                 break;
@@ -88,14 +92,10 @@ public class MainActivity extends AppCompatActivity {
     public void init() {
         mainPageToolbar = (Toolbar) findViewById(R.id.mainPageToolbar);
         mainPageToolbar.inflateMenu(R.menu.mainpage_menu);
+        mainPageToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
         setSupportActionBar(mainPageToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, mainPageToolbar, R.string.drawer_open, R.string.drawer_close);
-        actionBarDrawerToggle.syncState();
-        drawerLayout.setDrawerListener(actionBarDrawerToggle);
         // 侧边栏
         navigation = (NavigationView) findViewById(R.id.navigation);
         navHeaderView = navigation.getHeaderView(0);
@@ -108,6 +108,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addListener() {
+        mainPageToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(navigation);
+            }
+        });
         navigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -137,11 +143,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setDefaultFragment() {
-        PostFragment postFragment = new PostFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("Key", HOMEPAGE);
-        postFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, postFragment).commit();
+        mainPage = PostFragment.getPostFragment(PostFragment.POSTTYPE.HOMEPAGE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, mainPage).commit();
     }
 
     public void checkForNew(int accountId) {
@@ -156,8 +159,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onError(Request request, Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(MainActivity.this, "检查新消息失败",
-                                Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

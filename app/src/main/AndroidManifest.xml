@@ -21,7 +21,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/PostTheme">
+            android:theme="@style/ToolbarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,14 +30,16 @@
         </activity>
         <activity
             android:name=".ui.SearchActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/ToolbarTheme"/>
         <activity
             android:name=".ui.SearchResultActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/ToolbarTheme"/>
         <activity
             android:name=".ui.PostActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/PostTheme" />
+            android:theme="@style/ToolbarTheme" />
         <activity
             android:name=".ui.FloorActivity"
             android:screenOrientation="portrait" />
