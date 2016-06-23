@@ -403,7 +403,7 @@ Caused by: java.lang.IllegalArgumentException: Could not resolve resource locati
 [INFO] [2016-05-27 09:54:54][org.springframework.context.support.GenericApplicationContext]Refreshing org.springframework.context.support.GenericApplicationContext@6536e911: startup date [Fri May 27 09:54:54 GMT+08:00 2016]; root of context hierarchy
 [INFO] [2016-05-27 09:54:54][org.springframework.beans.factory.config.PropertyPlaceholderConfigurer]Loading properties file from class path resource [jdbc.properties]
 [INFO] [2016-05-27 09:54:54][org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor]JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
-[INFO] [2016-05-27 09:54:54][com.hyj.service.impl.PostServiceImpl]true
+[INFO] [2016-05-27 09:54:54][com.hyj.service.impl.PostFloorServiceImpl]true
 [INFO] [2016-05-27 09:54:54][com.zaxxer.hikari.HikariDataSource]HikariPool-1 - Started.
 [INFO] [2016-05-27 09:54:56][com.zaxxer.hikari.pool.HikariPool]HikariPool-1 - Close initiated...
 [INFO] [2016-05-27 09:54:56][com.zaxxer.hikari.pool.HikariPool]HikariPool-1 - Closed.

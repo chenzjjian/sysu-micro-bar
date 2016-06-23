@@ -22,4 +22,6 @@ public interface FloorMapper {
     int updateByPrimaryKeySelective(Floor record);
 
     int updateByPrimaryKey(Floor record);
+
+    Floor selectByPostAndFloor(Integer postId, Integer floorId);
 }

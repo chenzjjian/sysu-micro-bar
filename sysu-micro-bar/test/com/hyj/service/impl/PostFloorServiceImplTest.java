@@ -1,7 +1,7 @@
 package com.hyj.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.hyj.service.PostService;
+import com.hyj.service.PostFloorService;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,24 +15,24 @@ import javax.annotation.Resource;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-mybatis.xml"})
-public class PostServiceImplTest {
+public class PostFloorServiceImplTest {
     @Test
     public void searchPostData() throws Exception {
-        logger.info(JSON.toJSONString(postService.searchPostData("咯", null)));
-        logger.info(JSON.toJSONString(postService.searchPostData("咯", null).size()));
+        logger.info(JSON.toJSONString(postFloorService.searchPostData("咯", null)));
+        logger.info(JSON.toJSONString(postFloorService.searchPostData("咯", null).size()));
     }
 
 
-    private static Logger logger = Logger.getLogger(PostServiceImplTest.class);
+    private static Logger logger = Logger.getLogger(PostFloorServiceImplTest.class);
     @Resource
-    private PostService postService = null;
+    private PostFloorService postFloorService = null;
     @Test
     public void getAllFloorDatas() throws Exception {
-        logger.info(JSON.toJSONString(postService.getAllFloorDatas(1)));
+        logger.info(JSON.toJSONString(postFloorService.getAllFloorDatas(1)));
     }
     @Test
     public void getPostDataList() throws Exception {
-        logger.info(JSON.toJSONString(postService.getPostDataList(0)));
+        logger.info(JSON.toJSONString(postFloorService.getPostDataList(0)));
     }
 
 

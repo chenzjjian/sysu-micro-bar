@@ -15,6 +15,9 @@ Date: 2016-06-23 05:53:33
 
 SET FOREIGN_KEY_CHECKS=0;
 
+
+USE sysu_micro_bar;
+
 -- ----------------------------
 -- Table structure for account
 -- ----------------------------

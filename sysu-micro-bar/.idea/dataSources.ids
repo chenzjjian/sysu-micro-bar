@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="MySQL - sysu_micro_bar@localhost" uuid="595c8dde-d813-40a5-86de-9e53577414ac">
+    <database-info product="MySQL" version="5.6.28-1ubuntu2" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
+    <database-model serializer="dbm" rdbms="MYSQL" format-version="2.5">
+      <schema id="1" name="sysu_micro_bar"/>
+      <table id="2" parent="1" name="account"/>
+      <table id="3" parent="1" name="floor"/>
+      <table id="4" parent="1" name="floor_file"/>
+      <table id="5" parent="1" name="history_message"/>
+      <table id="6" parent="1" name="post"/>
+      <column id="7" parent="2" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="8" parent="2" name="stu_no">
+        <data-type>varchar(100)</data-type>
+      </column>
+      <column id="9" parent="2" name="password">
+        <data-type>varchar(200)</data-type>
+      </column>
+      <column id="10" parent="2" name="nickname">
+        <data-type>varchar(100)</data-type>
+      </column>
+      <column id="11" parent="2" name="head_image_url">
+        <data-type>varchar(500)</data-type>
+      </column>
+      <column id="12" parent="2" name="authority">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="13" parent="2" name="register_time">
+        <mandatory>1</mandatory>
+        <data-type>timestamp</data-type>
+        <default-expression>&apos;CURRENT_TIMESTAMP&apos;</default-expression>
+      </column>
+      <key id="14" parent="2" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="15" parent="3" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="16" parent="3" name="post_id">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="17" parent="3" name="account_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="18" parent="3" name="reply_floor_id">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="19" parent="3" name="is_reply">
+        <data-type>tinyint(1)</data-type>
+      </column>
+      <column id="20" parent="3" name="detail">
+        <data-type>text</data-type>
+      </column>
+      <column id="21" parent="3" name="level_num">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="22" parent="3" name="create_time">
+        <mandatory>1</mandatory>
+        <data-type>timestamp</data-type>
+        <default-expression>&apos;CURRENT_TIMESTAMP&apos;</default-expression>
+      </column>
+      <index id="23" parent="3" name="FK_Reference_3">
+        <columns>post_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="24" parent="3" name="FK_Reference_5">
+        <columns>reply_floor_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="25" parent="3" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="26" parent="3" name="FK_Reference_3">
+        <columns>post_id</columns>
+        <ref-key>~.post.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="27" parent="3" name="FK_Reference_5">
+        <columns>reply_floor_id</columns>
+        <ref-key>PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="28" parent="4" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="29" parent="4" name="floor_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="30" parent="4" name="file_url">
+        <data-type>varchar(500)</data-type>
+      </column>
+      <column id="31" parent="4" name="file_type">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="32" parent="4" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="33" parent="5" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="34" parent="5" name="account_id">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="35" parent="5" name="floor_id">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="36" parent="5" name="is_checked">
+        <data-type>tinyint(1)</data-type>
+      </column>
+      <column id="37" parent="5" name="is_comment">
+        <data-type>tinyint(1)</data-type>
+      </column>
+      <index id="38" parent="5" name="FK_Reference_6">
+        <columns>account_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="39" parent="5" name="FK_Reference_7">
+        <columns>floor_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="40" parent="5" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="41" parent="5" name="FK_Reference_6">
+        <columns>account_id</columns>
+        <ref-key>~.account.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="42" parent="5" name="FK_Reference_7">
+        <columns>floor_id</columns>
+        <ref-key>~.floor.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="43" parent="6" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="44" parent="6" name="creator_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="45" parent="6" name="title">
+        <data-type>varchar(50)</data-type>
+      </column>
+      <column id="46" parent="6" name="tag">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="47" parent="6" name="create_time">
+        <mandatory>1</mandatory>
+        <data-type>timestamp</data-type>
+        <default-expression>&apos;CURRENT_TIMESTAMP&apos;</default-expression>
+      </column>
+      <column id="48" parent="6" name="modify_time">
+        <mandatory>1</mandatory>
+        <data-type>timestamp</data-type>
+        <default-expression>&apos;CURRENT_TIMESTAMP&apos;</default-expression>
+      </column>
+      <key id="49" parent="6" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+    </database-model>
+  </data-source>
+</component>

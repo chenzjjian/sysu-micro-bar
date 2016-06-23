@@ -1,11 +1,10 @@
 package com.hyj.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.hyj.dto.FloorData;
 import com.hyj.dto.HistoryData;
 import com.hyj.dto.PostData;
 import com.hyj.service.HistoryMessageService;
-import com.hyj.service.PostService;
+import com.hyj.service.PostFloorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -25,7 +24,7 @@ public class PostController {
     private static final Logger logger = LoggerFactory
             .getLogger(PostController.class);
     @Resource
-    private PostService postService;
+    private PostFloorService postFloorService;
     @Resource
     private HistoryMessageService historyMessageService;
 
@@ -37,8 +36,8 @@ public class PostController {
     @RequestMapping(value = "/getPostList", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public List<PostData> getPostData(@RequestParam("currentPostNum") int currentPostNum) {
-        logger.info(JSON.toJSONString(postService.getPostDataList(currentPostNum)));
-        return postService.getPostDataList(currentPostNum);
+        logger.info(JSON.toJSONString(postFloorService.getPostDataList(currentPostNum)));
+        return postFloorService.getPostDataList(currentPostNum);
     }
 
     /**
@@ -75,19 +74,10 @@ public class PostController {
     @RequestMapping(value = "/searchPostList", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public List<PostData> searchPostList(@RequestParam("title") String title, @RequestParam("tag") int tag) {
-        logger.info(JSON.toJSONString(postService.searchPostData(title, tag)));
-        return postService.searchPostData(title, tag);
+        logger.info(JSON.toJSONString(postFloorService.searchPostData(title, tag)));
+        return postFloorService.searchPostData(title, tag);
     }
 
-    /**
-     * 查看帖子详情(暂时不考虑下拉刷新)
-     * @param postId
-     * @return
-     */
-    @RequestMapping(value = "/seePostDetail", method = RequestMethod.POST, produces = "application/json")
-    @ResponseBody
-    public List<FloorData> seePost(@RequestParam("postId") int postId) {
-        logger.info(JSON.toJSONString(postService.getAllFloorDatas(postId)));
-        return postService.getAllFloorDatas(postId);
-    }
+
+
 }

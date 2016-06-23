@@ -2,7 +2,7 @@ package com.hyj.controller;
 
 import com.hyj.dto.PostData;
 import com.hyj.service.AccountService;
-import com.hyj.service.PostService;
+import com.hyj.service.PostFloorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,7 @@ public class SidebarController {
     private static final Logger logger = LoggerFactory
             .getLogger(SidebarController.class);
     @Resource
-    private PostService postService;
+    private PostFloorService postFloorService;
     @Resource
     private AccountService accountService;
 
@@ -39,7 +39,7 @@ public class SidebarController {
     @RequestMapping(value = "/getPostByMyself", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public List<PostData> getPostByMyself(@RequestParam("accountId") int accountId) {
-        return postService.getPostByMyself(accountId);
+        return postFloorService.getPostByMyself(accountId);
     }
 
 
@@ -67,7 +67,7 @@ public class SidebarController {
     @RequestMapping(value = "/getRecentPost", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public List<PostData> getRecentPost(@RequestParam("postIds") int[] postIds) {
-        return postService.getRecentPosts(postIds);
+        return postFloorService.getRecentPosts(postIds);
     }
 
 

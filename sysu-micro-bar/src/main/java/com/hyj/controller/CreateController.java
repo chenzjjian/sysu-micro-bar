@@ -1,7 +1,7 @@
 package com.hyj.controller;
 
 import com.hyj.service.AccountService;
-import com.hyj.service.PostService;
+import com.hyj.service.PostFloorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class CreateController {
     private static final Logger logger = LoggerFactory
             .getLogger(CreateController.class);
     @Resource
-    private PostService postService;
+    private PostFloorService postFloorService;
     @Resource
     private AccountService accountService;
 
@@ -56,7 +56,7 @@ public class CreateController {
         String contextPath = this.getContextPath(request);
         logger.info("rootPath " + rootPath);
         logger.info("contextPath " + contextPath);
-        return postService.createPost(accountId, title, tag, detail, files, rootPath, contextPath);
+        return postFloorService.createPost(accountId, title, tag, detail, files, rootPath, contextPath);
     }
 
     /**
@@ -111,7 +111,7 @@ public class CreateController {
         String contextPath = this.getContextPath(request);
         logger.info("rootPath " + rootPath);
         logger.info("contextPath " + contextPath);
-        return postService.createFloor(accountId, postId, detail, files, rootPath, contextPath);
+        return postFloorService.createFloor(accountId, postId, detail, files, rootPath, contextPath);
     }
 
     /**
@@ -139,6 +139,6 @@ public class CreateController {
         String contextPath = this.getContextPath(request);
         logger.info("rootPath " + rootPath);
         logger.info("contextPath " + contextPath);
-        return postService.createReply(accountId, postId, replyFloorId, detail, files, rootPath, contextPath);
+        return postFloorService.createReply(accountId, postId, replyFloorId, detail, files, rootPath, contextPath);
     }
 }

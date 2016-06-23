@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/5/26 0026.
  */
-public interface PostService {
+public interface PostFloorService {
     /**
      * 获取数据库中按创建时间排序的所有post数据
      * @return
@@ -77,4 +77,6 @@ s     * @return
 
 
     List<PostData> getRecentPosts(int[] postIds);
+
+    List<FloorData> getFloorInfo(int floorId);
 }

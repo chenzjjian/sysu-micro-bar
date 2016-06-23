@@ -5,9 +5,8 @@ import com.hyj.dao.*;
 import com.hyj.dto.FloorData;
 import com.hyj.dto.PostData;
 import com.hyj.entity.*;
-import com.hyj.service.PostService;
+import com.hyj.service.PostFloorService;
 import com.hyj.util.DateTimeUtil;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ import java.util.regex.Pattern;
  * Created by Administrator on 2016/5/26 0026.
  */
 @Service("postService")
-public class PostServiceImpl implements PostService {
+public class PostFloorServiceImpl implements PostFloorService {
     @Resource
     private PostMapper postMapper;
     @Resource
@@ -41,7 +40,7 @@ public class PostServiceImpl implements PostService {
 
 
     private static final Logger logger = LoggerFactory
-            .getLogger(PostServiceImpl.class);
+            .getLogger(PostFloorServiceImpl.class);
 
 
     public List<PostData> getPostDataList(int currentPostNum) {
@@ -62,6 +61,49 @@ public class PostServiceImpl implements PostService {
             posts.add(postMapper.selectByPrimaryKey(postId));
         }
         return transformPostsToPostDatas(posts);
+    }
+
+
+    /*查看回复..复制(若此条sql查询结果为空则是复制，否则是查看回复)*/
+    // 查看回复选项需要两个参数
+    // 1. post.id 2. floor.id
+    // 从floor表中筛选出
+    // 1. 不是回复的那些记录
+    // 2. post_id与floor.getPost().getId()一致
+    // 3. 比floor.id更晚被创建
+    // 4. 那些符合1, 2, 3的所有floor的reply_floor_id中含有当前的floor.id
+    // SELECT * FROM floor
+    // WHERE
+    // is_reply = false
+    // AND post_id = #{post.id}
+    // AND floor_id > #{floor.id}
+    // AND reply_floor_id = #{floor.id}
+
+
+    /**
+     * 点击 任何一个floor，有三种情况需要考虑:
+     * 1. 当floor属于回复的时候: 查看对话
+     * (属于回复的时候，我们可以拿到当前回复的account(发表回复者A)和
+     * 当前回复人的replyAccount(接收回复人B)，然后再通过数据表去查询出下列情况的记录:
+     *  (1). 属于回复且包含A和B的楼(isReply == true && (account A replyAccount B || account B replyAccount B))
+     *  (2). 不属于回复且只有A或者B发表的楼层...
+     * 2. 当floor不属于回复的时候，有两种情况:
+     *    1. 查看回复（当前的floor出现在后续floor的replyFloor字段中）
+     *    2. 复制(当前的floor没有出现在后续floor的replyFloor字段中)
+     *
+     *
+     *
+     *
+     * @param floorId
+     * @return
+     */
+    public List<FloorData> getFloorInfo(int floorId) {
+        Floor floor = floorMapper.selectByPrimaryKey(floorId);
+        if (floor.getIsReply()) {
+
+        } else {
+
+        }
     }
 
     public List<FloorData> getAllFloorDatas(int postId) {
