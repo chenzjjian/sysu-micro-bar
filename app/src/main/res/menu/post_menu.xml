@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.PostActivity">
+    <item android:id="@+id/select_picture"
+        android:title="选择照片"
+        android:orderInCategory="80"
+        android:icon="@drawable/ic_insert_photo_white_24dp"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/take_photo"
+        android:title="拍摄照片"
+        android:orderInCategory="90"
+        android:icon="@android:drawable/ic_menu_camera"
+        app:showAsAction="ifRoom"
+        />
+    <item android:id="@+id/commit"
+        android:title="发送帖子"
+        android:orderInCategory="100"
+        android:icon="@android:drawable/ic_media_play"
+        app:showAsAction="ifRoom"
+        />
+</menu>
