@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.softwaredesign.microbar.R;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 public class FloorActivity extends AppCompatActivity {
     private TextView title;
-    private ListView container;
+    private LoadMoreListView container;
     private FloorAdapter floorAdapter;
     private List<Floor> floors;
 
@@ -33,8 +32,8 @@ public class FloorActivity extends AppCompatActivity {
         title.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         // 648
         int width = title.getMeasuredWidth();
-        container = (ListView) findViewById(R.id.container);
-        initData();
+        container = (LoadMoreListView) findViewById(R.id.container);
+        floors = new ArrayList<>();
         floorAdapter = new FloorAdapter(this, floors, width);
         container.setAdapter(floorAdapter);
         container.setOnScrollListener(new FloorScrollListener(this));

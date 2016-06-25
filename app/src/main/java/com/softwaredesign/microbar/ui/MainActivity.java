@@ -9,7 +9,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,17 +18,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.softwaredesign.microbar.R;
+import com.softwaredesign.microbar.util.PostUtil;
 import com.squareup.okhttp.Request;
-import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String checkNewURL = "http://119.29.178.68:8080/sysu-micro-bar/checkMessage";
+    private static final String checkNewURL = "checkMessage";
 
-    private static final int HOMEPAGE = 0;
-    private static final int HISTORY = 1;
-    private static final int MYPOST = 2;
+    private static final int UPLOAD_POST = 0;
 
     private PostFragment mainPage;
 
@@ -65,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         String stuNo = sp.getString("stuNo", "匿名");
         String pwd = sp.getString("PASSWORD", "");
         userName.setText(stuNo);
-        Log.d("MainActivity", "321");
+        checkForNew();
     }
 
     @Override
@@ -76,17 +73,33 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.mainpage_search:
-                Intent intent = new Intent(this, SearchActivity.class);
+                intent = new Intent(this, SearchActivity.class);
                 startActivity(intent);
                 break;
             case R.id.mainpage_add:
+                intent = new Intent(this, PostActivity.class);
+                startActivityForResult(intent, UPLOAD_POST);
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch(requestCode) {
+                case UPLOAD_POST:
+                    break;
+                default:
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void init() {
@@ -102,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         userPortrait = (ImageView) navHeaderView.findViewById(R.id.userPortrait);
         userName = (TextView) navHeaderView.findViewById(R.id.userName);
         comment_layout = (LinearLayout) navigation.getMenu().findItem(R.id.menu_commentReply).getActionView();
+        comment_layout.setVisibility(View.INVISIBLE);
         comment_message = (TextView) comment_layout.findViewById(R.id.message);
         oldItem = navigation.getMenu().getItem(0);
         oldItem.setChecked(true);
@@ -147,30 +161,22 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.main_content, mainPage).commit();
     }
 
-    public void checkForNew(int accountId) {
-        OkHttpUtils
-                .post()
-                .url(checkNewURL)
-                .addParams("accountId", Integer.toString(accountId))
-                .build()
-                .connTimeOut(20000)
-                .execute(new StringCallback() {
+    private void checkForNew() {
+        PostUtil.checkForNew(checkNewURL, accountId, new StringCallback() {
+            @Override
+            public void onError(Request request, Exception e) {
+                e.printStackTrace();
+            }
 
-                    @Override
-                    public void onError(Request request, Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onResponse(String response) {
-                        Log.i("5555", response);
-                        if (response.contains("true")) {
-                            Toast.makeText(MainActivity.this, "有新消息", Toast.LENGTH_SHORT).show();
-                        } else if (response.contains("false")) {
-                            Toast.makeText(MainActivity.this, "木有新消息", Toast.LENGTH_SHORT).show();
-                            comment_layout.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                });
+            @Override
+            public void onResponse(String response) {
+                if (response.contains("true")) {
+                    comment_layout.setVisibility(View.VISIBLE);
+                    Toast.makeText(MainActivity.this, "有新消息", Toast.LENGTH_SHORT).show();
+                } else if (response.contains("false")) {
+                    Toast.makeText(MainActivity.this, "木有新消息", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

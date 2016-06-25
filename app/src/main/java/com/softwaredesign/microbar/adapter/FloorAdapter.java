@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -83,6 +84,7 @@ public class FloorAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.headPortait = (ImageView) convertView.findViewById(R.id.headPortrait);
             viewHolder.nickName = (TextView) convertView.findViewById(R.id.nickName);
+            viewHolder.reply = (ImageButton) convertView.findViewById(R.id.reply);
             viewHolder.time = (TextView) convertView.findViewById(R.id.time);
             viewHolder.floorContent = (TextView) convertView.findViewById(R.id.floorContent);
             convertView.setTag(viewHolder);
@@ -183,6 +185,7 @@ public class FloorAdapter extends BaseAdapter {
     static class ViewHolder {
         private ImageView headPortait;
         private TextView nickName;
+        private ImageButton reply;
         private TextView time;
         private TextView floorContent;
     }

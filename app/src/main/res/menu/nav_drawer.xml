@@ -15,7 +15,7 @@
         android:title="最近看过"/>
     <item
         android:id="@+id/menu_commentReply"
-        android:icon="@drawable/ic_comment_white_24dp"
+        android:icon="@drawable/ic_forum_white_24dp"
         app:actionLayout="@layout/text_badge"
         android:title="评论/回复"/>
     <item

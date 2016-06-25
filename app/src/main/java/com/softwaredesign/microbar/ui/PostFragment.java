@@ -13,10 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.google.gson.reflect.TypeToken;
 import com.softwaredesign.microbar.R;
 import com.softwaredesign.microbar.adapter.PostAdapter;
 import com.softwaredesign.microbar.model.Post;
+import com.softwaredesign.microbar.util.GsonUtil;
 import com.softwaredesign.microbar.util.PostUtil;
+import com.squareup.okhttp.Request;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +30,9 @@ import java.util.List;
  */
 // 与帖子有关的Fragment
 public class PostFragment extends Fragment {
+
+    private static final String getMoreURL = "getPostList";
+    private static final String searchPostUrl = "searchPostList";
 
     public enum POSTTYPE {
         HOMEPAGE, HISTORY, MYPOST, SEARCH
@@ -39,6 +46,8 @@ public class PostFragment extends Fragment {
     private String title;
     private int tag;
     private POSTTYPE postType;
+
+    private StringCallback callback;
 
     public PostFragment() {
     }
@@ -65,24 +74,36 @@ public class PostFragment extends Fragment {
 
     public void init(View v) {
         fragmentActivity = getActivity();
-        // 主页
         mRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.mainPage);
         mLoadMoreListView = (LoadMoreListView) v.findViewById(R.id.mainListView);
         postAdapter = new PostAdapter(fragmentActivity, posts);
-        Log.d("PostFragment", "123");
         mLoadMoreListView.setAdapter(postAdapter);
+        callback =  new StringCallback() {
+            @Override
+            public void onError(Request request, Exception e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(String response) {
+                List<Post> newPosts = GsonUtil.parseList(response, new TypeToken<List<Post>>() {
+                }.getType());
+                posts.addAll(newPosts);
+                postAdapter.notifyDataSetChanged();
+                mLoadMoreListView.setLoading(false);
+            }
+        };
+
         switch (postType) {
             case HOMEPAGE:
-                PostUtil.lookForMore(posts, 0);
-                postAdapter.notifyDataSetChanged();
+                PostUtil.lookForMore(getMoreURL, 0, callback);
                 break;
             case HISTORY:
                 break;
             case MYPOST:
                 break;
             case SEARCH:
-                PostUtil.searchPost(posts, title, tag);
-                postAdapter.notifyDataSetChanged();
+                PostUtil.searchPost(searchPostUrl, title, tag, callback);
                 break;
             default:
                 break;
@@ -110,14 +131,7 @@ public class PostFragment extends Fragment {
             @Override
             public void onLoad() {
                 Log.d("MainActivity", "loading");
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //lookForMore(mList.size());
-                        mLoadMoreListView.setLoading(false);
-                    }
-                }, 2000);
+                PostUtil.lookForMore(getMoreURL, posts.size(), callback);
             }
         });
         mLoadMoreListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

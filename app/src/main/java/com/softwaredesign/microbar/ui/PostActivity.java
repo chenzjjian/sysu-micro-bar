@@ -23,7 +23,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.softwaredesign.microbar.R;
+import com.softwaredesign.microbar.model.Post;
+import com.softwaredesign.microbar.util.GsonUtil;
 import com.softwaredesign.microbar.util.ImageUtil;
 import com.softwaredesign.microbar.util.UploadUtil;
 
@@ -36,6 +39,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import cz.msebera.android.httpclient.Header;
+
 /**
  * Created by mac on 16/6/3.
  */
@@ -43,7 +48,7 @@ public class PostActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURE = 0;
     private static final int TAKE_PHOTO = 1;
-    private static final String UPLOAD_URL = "http://119.29.178.68:8080/sysu-micro-bar/createPost";
+    private static final String UPLOAD_URL = "createPost";
 
     private Toolbar postToolbar;
     private EditText postTitle;
@@ -85,17 +90,20 @@ public class PostActivity extends AppCompatActivity {
             case R.id.commit:
                 uploadPost();
                 Log.i("PostActivity", "" + postContent.getText());
-                Intent intent = new Intent(PostActivity.this, FloorActivity.class);
-                startActivity(intent);
                 break;
+            case android.R.id.home:
+                finish();
+                return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     public void init() {
         postToolbar = (Toolbar) findViewById(R.id.postToolbar);
-        postToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        postToolbar.setTitle("发表帖子");
+        postToolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_white_24dp);
         setSupportActionBar(postToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         postTitle = (EditText)findViewById(R.id.postTitle);
         postTagSpinner = (Spinner) findViewById(R.id.postTag);
         postContent = (EditText) findViewById(R.id.postContent);
@@ -162,7 +170,17 @@ public class PostActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         UploadUtil.addTitleAndTag(params, 13331095, postTitle, postTag);
         UploadUtil.addContent(params, postContent, pictures);
-        UploadUtil.sendMultipartRequest(UPLOAD_URL, params);
+        UploadUtil.sendMultipartRequest(UPLOAD_URL, params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Post post = GsonUtil.parse(responseString, Post.class);
+            }
+        });
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.softwaredesign.microbar.util;
 
 import android.text.Editable;
-import android.util.Log;
 import android.widget.EditText;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -16,12 +15,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cz.msebera.android.httpclient.Header;
-
 /**
  * Created by mac on 16/6/4.
  */
 public class UploadUtil {
+    private static final String BASE_URL = "http://119.29.178.68:8080/sysu-micro-bar/";
+    private static AsyncHttpClient client = new AsyncHttpClient();
+
+    static {
+        client.addHeader("Accept", "application/json");
+    }
     /**
      *
      * @param params 上传参数
@@ -75,29 +78,12 @@ public class UploadUtil {
     }
 
 
-    public static void sendMultipartRequest(String url, RequestParams params) {
-        AsyncHttpClient client = new AsyncHttpClient();
+    public static void sendMultipartRequest(String url, RequestParams params, AsyncHttpResponseHandler asyncHttpResponseHandler) {
         params.setForceMultipartEntityContentType(true);
-        client.post(url, params, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                if (statusCode == 200) {
-                    if (headers != null) {
-                        for (Header header : headers)
-                            Log.i("Headers", header.getName() + ":" + header.getValue());
-                    }
-                    String response = new String(responseBody);
-                    Log.i("ResponseBody", response);
-                } else {
-                    Log.i("onSuccess", "上传失败[" + statusCode + "错误]");
-                }
-            }
+        client.post(getAbsoluteUrl(url), params, asyncHttpResponseHandler);
+    }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                Log.i("onFailure", new String(responseBody));
-                Log.i("onFailure", "上传失败[" + statusCode + "错误]");
-            }
-        });
+    private static String getAbsoluteUrl(String relativeUrl) {
+        return BASE_URL + relativeUrl;
     }
 }
