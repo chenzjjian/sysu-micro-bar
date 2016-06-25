@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_homePage"
+        android:icon="@drawable/ic_home_white_24dp"
+        android:title="首页"/>
+    <item
+        android:id="@+id/menu_editAccount"
+        android:icon="@drawable/ic_account_box_white_24dp"
+        android:title="修改资料"/>
+    <item
+        android:id="@+id/menu_recentlyWatch"
+        android:icon="@drawable/ic_history_white_24dp"
+        android:title="最近看过"/>
+    <item
+        android:id="@+id/menu_commentReply"
+        android:icon="@drawable/ic_comment_white_24dp"
+        app:actionLayout="@layout/text_badge"
+        android:title="评论/回复"/>
+    <item
+        android:id="@+id/menu_myPost"
+        android:icon="@drawable/ic_send_white_24dp"
+        android:title="我发的贴"/>
+    <item
+        android:id="@+id/menu_exit"
+        android:icon="@drawable/ic_cancel_white_24dp"
+        android:title="注销"/>
+</menu>

@@ -25,7 +25,7 @@ public class ImageUtil {
             final int heightRatio = Math.round((float) height / (float) reqHeight);
             final int widthRatio = Math.round((float) width / (float) reqWidth);
             inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-            Log.d("ImageUtils", "radio is " + inSampleSize);
+            Log.d("ImageUtil", "radio is " + inSampleSize);
         }
         return inSampleSize;
     }
@@ -97,7 +97,7 @@ public class ImageUtil {
         } else {
             dst = Bitmap.createScaledBitmap(src, dstWidth, dstHeight, false);
         }
-        Log.d("ImageUtils", "dstWidth is " + dst.getWidth() + ", dstHeight is " + dst.getHeight());
+        Log.d("ImageUtil", "dstWidth is " + dst.getWidth() + ", dstHeight is " + dst.getHeight());
         return dst;
     }
 }
