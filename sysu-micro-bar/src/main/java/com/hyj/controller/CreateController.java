@@ -1,5 +1,6 @@
 package com.hyj.controller;
 
+import com.hyj.dto.PostData;
 import com.hyj.service.AccountService;
 import com.hyj.service.PostFloorService;
 import org.slf4j.Logger;
@@ -39,12 +40,12 @@ public class CreateController {
      */
     @RequestMapping(value = "/createPost", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public boolean createPost(@RequestParam("accountId") int accountId,
-                              @RequestParam("title") String title,
-                              @RequestParam("detail") String detail,
-                              @RequestParam("tag") int tag,
-                              @RequestParam("file") MultipartFile[] files,
-                              HttpServletRequest request) {
+    public PostData createPost(@RequestParam("accountId") int accountId,
+                               @RequestParam("title") String title,
+                               @RequestParam("detail") String detail,
+                               @RequestParam("tag") int tag,
+                               @RequestParam("file") MultipartFile[] files,
+                               HttpServletRequest request) {
         logger.info("detail " + detail);
         logger.info("accountId" + accountId);
         logger.info("TITLE" + title);

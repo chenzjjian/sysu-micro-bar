@@ -33,12 +33,12 @@ public class FloorController {
         return postFloorService.getAllFloorDatas(postId);
     }
 
-
+/*
     @RequestMapping(value = "/seeSpecificFloor", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public List<FloorData> getFloorInfo(@RequestParam("floorId") int floorId) {
         return postFloorService.getFloorInfo(floorId);
         // return postFloorService.getAllFloorDatas(floorId);
-    }
+    }*/
 
 }

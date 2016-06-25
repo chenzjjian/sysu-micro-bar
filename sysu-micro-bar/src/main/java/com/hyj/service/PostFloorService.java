@@ -60,7 +60,7 @@ s     * @return
      * @param contextPath
      * @return
      */
-    boolean createPost(int accountId, String title, int tag, String detail, MultipartFile[] files, String rootPath, String contextPath);
+    PostData createPost(int accountId, String title, int tag, String detail, MultipartFile[] files, String rootPath, String contextPath);
     /**
      * 根据帖子id获取所有楼层
      * @param postId
@@ -78,5 +78,5 @@ s     * @return
 
     List<PostData> getRecentPosts(int[] postIds);
 
-    List<FloorData> getFloorInfo(int floorId);
+    // List<FloorData> getFloorInfo(int floorId);
 }

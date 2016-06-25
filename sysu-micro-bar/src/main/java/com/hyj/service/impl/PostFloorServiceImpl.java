@@ -97,14 +97,14 @@ public class PostFloorServiceImpl implements PostFloorService {
      * @param floorId
      * @return
      */
-    public List<FloorData> getFloorInfo(int floorId) {
+/*    public List<FloorData> getFloorInfo(int floorId) {
         Floor floor = floorMapper.selectByPrimaryKey(floorId);
         if (floor.getIsReply()) {
 
         } else {
 
         }
-    }
+    }*/
 
     public List<FloorData> getAllFloorDatas(int postId) {
         return transformFloorsToFloorDatas(floorMapper.selectByPostId(postId));
@@ -173,9 +173,9 @@ public class PostFloorServiceImpl implements PostFloorService {
         }
     }
 
-    public boolean createPost(int accountId, String title, int tag, String detail, MultipartFile[] files, String rootPath, String contextPath) {
+    public PostData createPost(int accountId, String title, int tag, String detail, MultipartFile[] files, String rootPath, String contextPath) {
         Account account = accountMapper.selectByPrimaryKey(accountId);
-        Post post = new Post(account, title, tag, new Date(), new Date());
+        Post post = new Post(account, title, tag, new Date());
         postMapper.insertSelective(post);
         Floor floor = new Floor(post, account, null, false, new Date(), detail);
         logger.info("postId" + post.getId());
@@ -187,7 +187,7 @@ public class PostFloorServiceImpl implements PostFloorService {
             String[] fileUrls = this.uploadFiles(floor.getId(), dirName, fileBaseUrl, files);
             this.afterUploadFiles(fileUrls, detail, floor);
         }
-        return true;
+        return transformPostToPostData(post);
     }
 
     public boolean createFloor(int accountId, int postId, String detail, MultipartFile[] files, String rootPath, String contextPath) {
@@ -258,6 +258,13 @@ public class PostFloorServiceImpl implements PostFloorService {
             postDatas.add(postData);
         }
         return postDatas;
+    }
+
+
+    private PostData transformPostToPostData(Post post) {
+        return new PostData(post.getId(),
+                post.getTitle(), Constants.POST_TAGS[post.getTag()],
+                DateTimeUtil.getDateTimeString(post.getCreateTime()), floorMapper.selectCountByPostId(post.getId()));
     }
 
     private List<FloorData> transformFloorsToFloorDatas(List<Floor> floors) {

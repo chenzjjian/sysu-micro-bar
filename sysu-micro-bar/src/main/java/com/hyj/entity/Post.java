@@ -13,7 +13,6 @@ public class Post {
 
     private Date createTime;
 
-    private Date modifyTime;
 
 
     public Post(String title, Integer tag) {
@@ -21,12 +20,11 @@ public class Post {
         this.tag = tag;
     }
 
-    public Post(Account creator, String title, Integer tag, Date createTime, Date modifyTime) {
+    public Post(Account creator, String title, Integer tag, Date createTime) {
         this.creator = creator;
         this.title = title;
         this.tag = tag;
         this.createTime = createTime;
-        this.modifyTime = modifyTime;
     }
 
     public Post() {
@@ -73,11 +71,4 @@ public class Post {
         this.createTime = createTime;
     }
 
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
 }

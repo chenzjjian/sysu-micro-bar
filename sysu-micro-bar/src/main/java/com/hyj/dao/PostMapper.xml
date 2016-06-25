@@ -8,11 +8,10 @@
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="tag" property="tag" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
     <association property="creator" column="creator_id" select="com.hyj.dao.AccountMapper.selectByPrimaryKey"/>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, creator_id, title, tag, create_time, modify_time
+    id, creator_id, title, tag, create_time
   </sql>
 
   
@@ -63,10 +62,10 @@
   </delete>
   <insert id="insert" parameterType="com.hyj.entity.Post" keyProperty="id" useGeneratedKeys="true">
     insert into post (id, creator_id, title,
-      tag, create_time, modify_time
+      tag, create_time
       )
     values (#{id,jdbcType=INTEGER}, #{creator.id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
-      #{tag,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
+      #{tag,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.hyj.entity.Post" useGeneratedKeys="true" keyProperty="id">
@@ -87,9 +86,6 @@
       <if test="createTime != null" >
         create_time,
       </if>
-      <if test="modifyTime != null" >
-        modify_time,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -106,9 +102,6 @@
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifyTime != null" >
-        #{modifyTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -127,9 +120,6 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="modifyTime != null" >
-        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -138,8 +128,7 @@
     set creator_id = #{creatorId,jdbcType=INTEGER},
       title = #{title,jdbcType=VARCHAR},
       tag = #{tag,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
