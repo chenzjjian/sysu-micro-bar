@@ -4,50 +4,91 @@ package com.softwaredesign.microbar.model;
  * Created by mac on 16/6/3.
  */
 public class Floor {
-    private String portraitUrl;
-    private String username;
-    private String timestamp;
-    private String content;
+
+    private int floorId;
+    private String headImageUrl;
+    private String nickname;
+    private String createTime;
+    private String detail;
+    private boolean isReply;
+    private String replyWho;
+    private String replyFloorId;
 
     public Floor() {
     }
 
-    public Floor(String portraitUrl, String username, String timestamp, String content) {
-        this.portraitUrl = portraitUrl;
-        this.username = username;
-        this.timestamp = timestamp;
-        this.content = content;
+    public Floor(int floorId, String headImageUrl, String nickname, String createTime, String detail, boolean isReply, String replyWho, String replyFloorId) {
+        this.floorId = floorId;
+        this.headImageUrl = headImageUrl;
+        this.nickname = nickname;
+        this.createTime = createTime;
+        this.detail = detail;
+        this.isReply = isReply;
+        this.replyWho = replyWho;
+        this.replyFloorId = replyFloorId;
     }
 
-    public String getPortraitUrl() {
-        return portraitUrl;
+    public int getFloorId() {
+        return floorId;
     }
 
-    public void setPortraitUrl(String portraitUrl) {
-        this.portraitUrl = portraitUrl;
+    public void setFloorId(int floorId) {
+        this.floorId = floorId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getHeadImageUrl() {
+        return headImageUrl;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setHeadImageUrl(String headImageUrl) {
+        this.headImageUrl = headImageUrl;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public String getContent() {
-        return content;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    public boolean isReply() {
+        return isReply;
+    }
+
+    public void setIsReply(boolean isReply) {
+        this.isReply = isReply;
+    }
+
+    public String getReplyWho() {
+        return replyWho;
+    }
+
+    public void setReplyWho(String replyWho) {
+        this.replyWho = replyWho;
+    }
+
+    public String getReplyFloorId() {
+        return replyFloorId;
+    }
+
+    public void setReplyFloorId(String replyFloorId) {
+        this.replyFloorId = replyFloorId;
     }
 }

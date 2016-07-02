@@ -1,11 +1,24 @@
 package com.softwaredesign.microbar.model;
 
-public class Post {
+import java.io.Serializable;
+
+public class Post implements Serializable{
     private String title;
     private int postId;
     private int commentNum;
     private String createTime;
     private String tag;
+
+    public Post() {
+    }
+
+    public Post(String title, int postId, int commentNum, String createTime, String tag) {
+        this.title = title;
+        this.postId = postId;
+        this.commentNum = commentNum;
+        this.createTime = createTime;
+        this.tag = tag;
+    }
 
     public String getTitle() {
         return title;

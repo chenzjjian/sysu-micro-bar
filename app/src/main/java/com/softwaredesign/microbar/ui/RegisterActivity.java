@@ -170,7 +170,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         editor.putInt("accountId", Integer.parseInt(s2));
                                         editor.putString("stuNo", userId);
                                         editor.putString("PASSWORD", userPwd);
-                                        editor.commit();
+                                        editor.apply();
 
 
                                         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);

@@ -3,7 +3,14 @@ package com.softwaredesign.microbar.util;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Log;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 /**
  * Created by mac on 16/6/3.
@@ -99,5 +106,42 @@ public class ImageUtil {
         }
         Log.d("ImageUtil", "dstWidth is " + dst.getWidth() + ", dstHeight is " + dst.getHeight());
         return dst;
+    }
+
+    public static Bitmap compressBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        int beginRate = 100;
+        bitmap.compress(Bitmap.CompressFormat.JPEG, beginRate, bOut);
+        while(bOut.size()/1024/1024 > 100) {
+            beginRate -= 10;
+            bOut.reset();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, beginRate, bOut);
+            if (beginRate == 0) break;
+        }
+        Log.d("ImageUtil", ""+beginRate);
+        ByteArrayInputStream bIn = new ByteArrayInputStream(bOut.toByteArray());
+        Bitmap newBitmap = BitmapFactory.decodeStream(bIn);
+        if (newBitmap != null) {
+            bitmap.recycle();
+            return newBitmap;
+        } else {
+            return bitmap;
+        }
+    }
+
+    public static File persistImage(Bitmap bitmap, String name) {
+        String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
+        File tempFile = new File(extStorageDirectory, name+".jpg");
+        Log.d("ImageUtil", tempFile.getAbsolutePath());
+        OutputStream os;
+        try {
+            os = new FileOutputStream(tempFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tempFile;
     }
 }

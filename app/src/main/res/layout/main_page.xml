@@ -8,6 +8,6 @@
     <com.softwaredesign.microbar.ui.LoadMoreListView
         android:id="@+id/mainListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </android.support.v4.widget.SwipeRefreshLayout>

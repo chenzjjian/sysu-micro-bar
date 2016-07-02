@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,55 +16,64 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.softwaredesign.microbar.R;
-import com.softwaredesign.microbar.model.Post;
-import com.softwaredesign.microbar.util.GsonUtil;
 import com.softwaredesign.microbar.util.ImageUtil;
 import com.softwaredesign.microbar.util.UploadUtil;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
 
 /**
- * Created by mac on 16/6/3.
+ * Created by mac on 16/7/2.
  */
-public class PostActivity extends AppCompatActivity {
-
+public class ReplyActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 0;
     private static final int TAKE_PHOTO = 1;
-    private static final String CREATEPOST = "createPost";
 
-    private Toolbar postToolbar;
-    private EditText postTitle;
-    private Spinner postTagSpinner;
-    private int postTag;
-    private EditText postContent;
+    private static final int MAKE_REPLY = 0;
+    private static final int CREATE_FLOOR = 1;
+
+    private static final String CREATEREPLY = "";
+    private static final String CREATEFLOOR = "";
+
+    private Toolbar replyToolbar;
+    private TextView typeString;
+    private TextView replyWho;
+
+    private EditText replyContent;
     // Key: uuid, Value: path
     private LinkedHashMap<String, Bitmap> pictures;
 
     private Uri outputFileUri;
 
+    private int type;
+    private int postId;
+    private String nickName;
+    private int replyFloorId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post);
+        setContentView(R.layout.activity_reply);
+        Bundle bundle = getIntent().getExtras();
+        type = bundle.getInt("type");
+        if (type == MAKE_REPLY) {
+            postId = bundle.getInt("postId");
+            nickName = bundle.getString("nickName");
+            replyFloorId = bundle.getInt("replyFloorId");
+        } else if (type == CREATE_FLOOR) {
+            postId = bundle.getInt("postId");
+        }
         init();
-        setListener();
     }
 
     @Override
@@ -81,51 +89,26 @@ public class PostActivity extends AppCompatActivity {
                 getImageFromGallery();
                 break;
             case R.id.take_photo:
-                File file = createPhotoFile();
-                Log.i("PostActivity", "photo's path is " + file);
+                File file = PostActivity.createPhotoFile();
+                Log.i("ReplyActivity", "photo's path is " + file);
                 outputFileUri = Uri.fromFile(file);
-                Log.i("PostActivity", "FileUri is " + outputFileUri);
+                Log.i("ReplyActivity", "FileUri is " + outputFileUri);
                 takePhoto(outputFileUri);
                 break;
             case R.id.commit:
-                uploadPost();
-                Log.i("PostActivity", "" + postContent.getText());
+                if (type == MAKE_REPLY) {
+                    commitReply();
+                    Log.i("ReplyActivity", "" + replyContent.getText());
+                } else if (type == CREATE_FLOOR) {
+                    createFloor();
+                    Log.i("ReplyActivity", "" + replyContent.getText());
+                }
                 break;
             case android.R.id.home:
                 finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void init() {
-        postToolbar = (Toolbar) findViewById(R.id.postToolbar);
-        postToolbar.setTitle("发表帖子");
-        postToolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_white_24dp);
-        setSupportActionBar(postToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        postTitle = (EditText)findViewById(R.id.postTitle);
-        postTagSpinner = (Spinner) findViewById(R.id.postTag);
-        postContent = (EditText) findViewById(R.id.postContent);
-        pictures = new LinkedHashMap<>();
-    }
-
-    public void setListener() {
-        final String[] postTags = getResources().getStringArray(R.array.postTags);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, postTags);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        postTagSpinner.setAdapter(adapter);
-        postTagSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                postTag = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Another interface callback
-            }
-        });
     }
 
     // 从系统相册中获取图片
@@ -136,53 +119,68 @@ public class PostActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "选择图片"), SELECT_PICTURE);
     }
 
-    /**
-     * 创建存储照片的文件
-     *
-     * @return 照片的存储路径(这里设置为公有的Pictures路径)
-     */
-    public static File createPhotoFile() {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        try {
-            return File.createTempFile(imageFileName, ".jpg", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * 拍照获取图片并保存在系统的Pictures路径下
-     *
-     * @param uri 拍照前产生的用来保存图片的Uri
-     */
     public void takePhoto(Uri uri) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, TAKE_PHOTO);
     }
 
-    /**
-     * 上传帖子
-     */
-    public void uploadPost() {
+    public void init() {
+        typeString = (TextView) findViewById(R.id.type);
+        replyToolbar = (Toolbar) findViewById(R.id.postToolbar);
+        replyToolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_white_24dp);
+        replyWho = (TextView) findViewById(R.id.replyWho);
+        if (type == MAKE_REPLY) {
+            typeString.setText("回复 ");
+            replyToolbar.setTitle("编辑回复");
+            replyWho.setText(nickName);
+        } else if (type == CREATE_FLOOR) {
+            typeString.setText("评论 ");
+            replyToolbar.setTitle("编辑评论");
+            replyWho.setVisibility(View.INVISIBLE);
+        }
+        setSupportActionBar(replyToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        replyContent = (EditText) findViewById(R.id.replyContent);
+        pictures = new LinkedHashMap<>();
+    }
+
+    public void commitReply() {
         RequestParams params = new RequestParams();
-        UploadUtil.addTitleAndTag(params, 1, postTitle, postTag);
-        UploadUtil.addContent(params, postContent, pictures);
-        UploadUtil.sendMultipartRequest(CREATEPOST, params, new TextHttpResponseHandler() {
+        params.put("accountId", 1);
+        params.put("postId", postId);
+        params.put("replyFloorId", replyFloorId);
+        UploadUtil.addContent(params, replyContent, pictures);
+        UploadUtil.sendMultipartRequest(CREATEREPLY, params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("PostActivity", "" + statusCode);
-                Log.d("PostActiviyu", responseString);
+                Log.d("ReplyActivity", "" + statusCode);
+                Log.d("ReplyActiviyu", responseString);
             }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                Post post = GsonUtil.parse(responseString, Post.class);
-                Intent intent = new Intent();
-                intent.putExtra("post", post);
-                setResult(RESULT_OK, intent);
+                // setResult
+                finish();
+            }
+        });
+    }
+
+    public void createFloor() {
+        RequestParams params = new RequestParams();
+        params.put("accountId", 1);
+        params.put("postId", postId);
+        UploadUtil.addContent(params, replyContent, pictures);
+        UploadUtil.sendMultipartRequest(CREATEFLOOR, params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d("ReplyActivity", "" + statusCode);
+                Log.d("ReplyActiviyu", responseString);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                // setResult
                 finish();
             }
         });
@@ -194,10 +192,10 @@ public class PostActivity extends AppCompatActivity {
 
         // 返回不成功时的处理
         if (resultCode != RESULT_OK) {
-            Log.d("PostActivity", "canceled or other exception!");
+            Log.d("ReplyActivity", "canceled or other exception!");
             switch (requestCode) {
                 case SELECT_PICTURE:
-                    Log.i("PostActivity", "don't pick any picture");
+                    Log.i("ReplyActivity", "don't pick any picture");
                     break;
                 case TAKE_PHOTO:
                     deleteEmptyPhotoPath(outputFileUri);
@@ -211,12 +209,12 @@ public class PostActivity extends AppCompatActivity {
         switch (requestCode) {
             case SELECT_PICTURE:
                 Uri contentUri = data.getData();
-                Log.i("PostActivity", "Uri: " + contentUri);
-                insertImageIntoText(postContent, contentUri, pictures);
+                Log.i("ReplyActivity", "Uri: " + contentUri);
+                insertImageIntoText(replyContent, contentUri, pictures);
                 break;
 
             case TAKE_PHOTO:
-                insertImageIntoText(postContent, outputFileUri, pictures);
+                insertImageIntoText(replyContent, outputFileUri, pictures);
                 // 发送Media Scanner更新通知
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, outputFileUri));
                 break;
@@ -225,26 +223,6 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 删掉拍照时产生的空文件(创建了文件却没有拍照导致文件为空)
-     *
-     * @param uri 拍照前创建的Uri
-     * @return 是否删除成功
-     */
-    public boolean deleteEmptyPhotoPath(Uri uri) {
-        String photoPath = getRealPathFromURI(uri);
-        File f = new File(photoPath);
-        Log.i("PostActivity", "photo path is " + photoPath);
-        return f.exists() && f.delete();
-    }
-
-    /**
-     * 将图片插入到文本中
-     *
-     * @param editText           文本对应的EditTex对象
-     * @param contentUri         插入图片的Uri
-     * @param spanStrings_pathes 存储图片的spanString和path
-     */
     public void insertImageIntoText(EditText editText, Uri contentUri, Map<String, Bitmap> spanStrings_pathes) {
         // 获取真正的图片路径
         // Android4.4之后返回的URI只有图片编号,而不是真正的路径
@@ -275,20 +253,21 @@ public class PostActivity extends AppCompatActivity {
 
         // 将图片的标识和路径存储为Map,用于上传到服务器
         spanStrings_pathes.put(id, smallBitmap);
-        Log.i("PostActivity", id);
+        Log.i("ReplyActivity", id);
     }
 
-    /**
-     * 获取Uri对应的真实路径
-     *
-     * @param contentUri 需要获取真正路径的Uri
-     * @return 图片的真实路径
-     */
+    public boolean deleteEmptyPhotoPath(Uri uri) {
+        String photoPath = getRealPathFromURI(uri);
+        File f = new File(photoPath);
+        Log.i("ReplyActivity", "photo path is " + photoPath);
+        return f.exists() && f.delete();
+    }
+
     public String getRealPathFromURI(Uri contentUri) {
         String path;
         Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
         if (cursor == null) {
-            Log.i("PostActivity", "cursor is null");
+            Log.i("ReplyActivity", "cursor is null");
             path = contentUri.getPath();
         } else {
             cursor.moveToFirst();
@@ -296,16 +275,7 @@ public class PostActivity extends AppCompatActivity {
             path = cursor.getString(idx);
             cursor.close();
         }
-        Log.i("PostActivity", "path: " + path);
+        Log.i("ReplyActivity", "path: " + path);
         return path;
-    }
-
-    @Override
-    protected void onDestroy() {
-        for (Bitmap bitmap: pictures.values()) {
-            bitmap.recycle();
-        }
-        pictures.clear();
-        super.onDestroy();
     }
 }

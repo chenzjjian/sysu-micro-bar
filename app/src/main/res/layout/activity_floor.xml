@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/floor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:orientation="vertical">
+    <include layout="@layout/toolbar_floor"/>
     <TextView
         android:id="@+id/title"
+        style="@style/MyTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="没有女朋友是一种怎样的体验?"
         android:layout_marginBottom="20dp"
-        android:textStyle="bold"
-        android:textSize="24sp"/>
+        android:gravity="center" />
     <!--layout_height修改为match_parent,避免getView重复加载-->
     <com.softwaredesign.microbar.ui.LoadMoreListView
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.softwaredesign.microbar.ui.LoadMoreListView>
+        android:layout_height="match_parent"/>
 </LinearLayout>

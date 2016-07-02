@@ -2,14 +2,12 @@ package com.softwaredesign.microbar.ui;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,11 +22,12 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String checkNewURL = "checkMessage";
-
-    private static final int UPLOAD_POST = 0;
+    private static final String CHECKNEW = "checkMessage";
 
     private PostFragment mainPage;
+    private PostFragment recentlyWatch;
+    private PostFragment commentReply;
+    private PostFragment myPost;
 
     private SharedPreferences sp;
     private int accountId;
@@ -65,43 +64,6 @@ public class MainActivity extends AppCompatActivity {
         checkForNew();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mainpage_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.mainpage_search:
-                intent = new Intent(this, SearchActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.mainpage_add:
-                intent = new Intent(this, PostActivity.class);
-                startActivityForResult(intent, UPLOAD_POST);
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch(requestCode) {
-                case UPLOAD_POST:
-                    break;
-                default:
-                    break;
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
     public void init() {
         mainPageToolbar = (Toolbar) findViewById(R.id.mainPageToolbar);
         mainPageToolbar.inflateMenu(R.menu.mainpage_menu);
@@ -133,14 +95,27 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_homePage:
+                        if (mainPage == null) {
+                            mainPage = PostFragment.getPostFragment(PostFragment.POSTTYPE.HOMEPAGE);
+                        }
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, mainPage).commit();
                         break;
                     case R.id.menu_editAccount:
                         break;
                     case R.id.menu_recentlyWatch:
+                        if (recentlyWatch == null) {
+                            recentlyWatch = PostFragment.getPostFragment(PostFragment.POSTTYPE.HISTORY);
+                        }
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, recentlyWatch).commit();
                         break;
                     case R.id.menu_commentReply:
                         break;
                     case R.id.menu_myPost:
+                        if (myPost == null) {
+                            myPost = PostFragment.getPostFragment(PostFragment.POSTTYPE.MYPOST);
+                        }
+                        myPost.setAccountId(accountId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, myPost).commit();
                         break;
                     case R.id.menu_exit:
                         break;
@@ -162,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkForNew() {
-        PostUtil.checkForNew(checkNewURL, accountId, new StringCallback() {
+        PostUtil.checkForNew(CHECKNEW, accountId, new StringCallback() {
             @Override
             public void onError(Request request, Exception e) {
                 e.printStackTrace();

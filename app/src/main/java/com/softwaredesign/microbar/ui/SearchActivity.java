@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.softwaredesign.microbar.R;
 
 public class SearchActivity extends AppCompatActivity {
-    private static final int SEARCH = 3;
 
     private Toolbar searchToolbar;
     private Spinner searchType;
