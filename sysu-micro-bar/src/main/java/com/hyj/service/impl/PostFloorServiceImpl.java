@@ -94,7 +94,6 @@ public class PostFloorServiceImpl implements PostFloorService {
      *
      *
      *
-     * @param floorId
      * @return
      */
 /*    public List<FloorData> getFloorInfo(int floorId) {
@@ -159,18 +158,24 @@ public class PostFloorServiceImpl implements PostFloorService {
     private void afterUploadFiles(String[] fileUrls, String content, Floor floor) {
         logger.info("上传文件");
         if (fileUrls != null) {
-            String regex = "\\[img=\\w+-\\w+-\\w+-\\w+-\\w+\\]";
-            Pattern pattern = Pattern.compile(regex);
+            logger.info("文件urls为: ");
+            for (String fileUrl : fileUrls)
+                logger.info(fileUrl);
+            logger.info("原来" + content);
+            Pattern pattern = Pattern.compile("\\[img=\\w+-\\w+-\\w+-\\w+-\\w+\\]");
             Matcher matcher = pattern.matcher(content);
             int count = 0;
             while (matcher.find()) {
-                content = content.replace(matcher.group(), "\n<img src=\"" + fileUrls[count] + "\"</img>");
+                content = content.replace(matcher.group(), "\n<img src=\"" + fileUrls[count] + "\"></img>");
                 logger.info(content);
                 ++count;
             }
             floor.setDetail(content);
             floorMapper.updateByPrimaryKeySelective(floor);
         }
+    }
+
+    public static void main(String[] args) {
     }
 
     public PostData createPost(int accountId, String title, int tag, String detail, MultipartFile[] files, String rootPath, String contextPath) {

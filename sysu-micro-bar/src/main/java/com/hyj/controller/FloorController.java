@@ -5,6 +5,7 @@ import com.hyj.dto.FloorData;
 import com.hyj.service.PostFloorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * Created by gangsterhyj on 16-6-23.
  */
+@Controller
 public class FloorController {
     private static final Logger logger = LoggerFactory
             .getLogger(FloorController.class);
