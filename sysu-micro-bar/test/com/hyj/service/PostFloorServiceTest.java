@@ -15,18 +15,25 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-mybatis.xml"})
 public class PostFloorServiceTest {
+
+
     private static Logger logger = Logger.getLogger(PostFloorServiceTest.class);
     @Resource
     private PostFloorService postFloorService = null;
 
     @Test
     public void createReply() throws Exception {
-        postFloorService.createReply(2, 24, 39, "66666你这个僚机", null, null, null);
+        postFloorService.createReply(1, 24, 2, "66666你这个僚机", null, null, null);
+    }
+
+    @Test
+    public void getPostDataUpdated() throws Exception {
+        logger.info(JSON.toJSONString(postFloorService.getPostDataUpdated(140)));
     }
 
     @Test
     public void createFloor() throws Exception {
-        postFloorService.createFloor(2, 24, "你行你上", null, null, null);
+        postFloorService.createFloor(1, 24, "你行你上", null, null, null);
     }
 
 
@@ -43,7 +50,7 @@ public class PostFloorServiceTest {
 
     @Test
     public void getAllFloorDatas() throws Exception {
-        logger.info(JSON.toJSONString(postFloorService.getAllFloorDatas(1)));
+        logger.info(JSON.toJSONString(postFloorService.getAllFloorDatas(24)));
     }
 
 }

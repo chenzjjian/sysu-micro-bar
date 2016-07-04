@@ -29,7 +29,7 @@ public class PostController {
     private HistoryMessageService historyMessageService;
 
     /**
-     * 首页下拉刷新: 显示最新帖子
+     * 首页上拉刷新: 显示最新帖子
      * @param currentPostNum
      * @return
      */
@@ -39,6 +39,20 @@ public class PostController {
         logger.info(JSON.toJSONString(postFloorService.getPostDataList(currentPostNum)));
         return postFloorService.getPostDataList(currentPostNum);
     }
+
+
+    /**
+     * 首页下拉刷新
+     * @param firstPostId
+     * @return
+     */
+    @RequestMapping(value = "/getPostUpdated", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public List<PostData> getPostUpdated(@RequestParam("firstPostId") int firstPostId) {
+        logger.info(JSON.toJSONString(postFloorService.getPostDataUpdated(firstPostId)));
+        return postFloorService.getPostDataUpdated(firstPostId);
+    }
+
 
     /**
      * 首页个人消息: 显示是否有最新消息

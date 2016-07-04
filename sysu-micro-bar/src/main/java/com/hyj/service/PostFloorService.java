@@ -78,5 +78,7 @@ s     * @return
 
     List<PostData> getRecentPosts(int[] postIds);
 
+    List<PostData> getPostDataUpdated(int firstPostId);
+
     // List<FloorData> getFloorInfo(int floorId);
 }

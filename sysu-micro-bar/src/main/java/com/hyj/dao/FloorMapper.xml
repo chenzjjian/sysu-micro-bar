@@ -40,7 +40,7 @@
     <include refid="Blob_Column_List" />
     from floor
     where post_id = #{post.id,jdbcType=INTEGER}
-    order by create_time desc
+    order by create_time
   </select>
   <select id="selectCountByPostId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select count(*)

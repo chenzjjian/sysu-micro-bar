@@ -20,6 +20,13 @@ import java.util.List;
 @ContextConfiguration(locations = {"classpath:spring-mybatis.xml"})
 public class PostMapperTest {
     @Test
+    public void selectPostUpdated() throws Exception {
+        List<Post> posts = postMapper.selectPostUpdated(100);
+        logger.info(JSON.toJSONString(posts));
+        logger.info(posts.size() + "");
+    }
+
+    @Test
     public void selectPostByCreator() throws Exception {
         List<Post> posts = postMapper.selectPostByCreator(13331095);
         logger.info(JSON.toJSONString(posts));

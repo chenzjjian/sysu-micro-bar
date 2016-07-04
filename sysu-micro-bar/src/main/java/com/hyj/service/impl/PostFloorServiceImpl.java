@@ -63,6 +63,10 @@ public class PostFloorServiceImpl implements PostFloorService {
         return transformPostsToPostDatas(posts);
     }
 
+    public List<PostData> getPostDataUpdated(int firstPostId) {
+        return transformPostsToPostDatas(postMapper.selectPostUpdated(firstPostId));
+    }
+
 
     /*查看回复..复制(若此条sql查询结果为空则是复制，否则是查看回复)*/
     // 查看回复选项需要两个参数
@@ -175,8 +179,7 @@ public class PostFloorServiceImpl implements PostFloorService {
         }
     }
 
-    public static void main(String[] args) {
-    }
+
 
     public PostData createPost(int accountId, String title, int tag, String detail, MultipartFile[] files, String rootPath, String contextPath) {
         Account account = accountMapper.selectByPrimaryKey(accountId);
@@ -251,9 +254,6 @@ public class PostFloorServiceImpl implements PostFloorService {
 
 
 
-
-
-
     private List<PostData> transformPostsToPostDatas(List<Post> posts) {
         List<PostData> postDatas = new ArrayList<PostData>();
         for (Post post : posts) {
@@ -278,12 +278,12 @@ public class PostFloorServiceImpl implements PostFloorService {
             /*楼层id--->账号*/
             Account account = floor.getAccount();
             /*如果有回复，就增加replyAccount= =有可能空指针错误需要注意*/
-            boolean isReply = floor.getIsReply();
+            Boolean isReply = floor.getIsReply();
             Floor replyFloor = floor.getReplyFloor();
             Account replyAccount = isReply ? replyFloor.getAccount() : null;
             FloorData floorData = new FloorData(floor.getId(), account.getHeadImageUrl(), account.getNickname(),
                     DateTimeUtil.getDateTimeString(floor.getCreateTime()), floor.getDetail(),
-                    isReply, isReply == true ? replyAccount.getNickname() : null, isReply == true ? replyFloor.getId() : null);
+                    isReply ? 1 : 0, isReply ? replyAccount.getNickname() : null, isReply  ? replyFloor.getId() : null);
             floorDatas.add(floorData);
         }
         return floorDatas;

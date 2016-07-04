@@ -14,13 +14,21 @@
     id, creator_id, title, tag, create_time
   </sql>
 
+  <select id="selectPostUpdated" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM post
+    WHERE id > #{firstPostId, jdbcType=INTEGER}
+    ORDER BY id DESC
+  </select>
+
   
   <select id="selectPostByCreator" resultMap="BaseResultMap">
     SELECT 
     <include refid="Base_Column_List" />
     FROM post
     WHERE creator_id = #{creatorId, jdbcType=INTEGER}
-    ORDER BY create_time
+    ORDER BY create_time DESC
   </select>
   
   <select id="searchByTitleAndTag" resultMap="BaseResultMap">
