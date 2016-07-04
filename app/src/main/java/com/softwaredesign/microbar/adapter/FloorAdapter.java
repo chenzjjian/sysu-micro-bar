@@ -130,7 +130,8 @@ public class FloorAdapter extends BaseAdapter {
         });
 
         viewHolder.time.setText(floor.getCreateTime());
-        if (floor.isReply()) {
+        Log.d("FloorAdapter", ""+floor.getIsReply());
+        if (floor.getIsReply() == 1) {
             String replyWho = floor.getReplyWho();
             floor.setDetail("回复 "+replyWho + ":\n" + floor.getDetail());
         }

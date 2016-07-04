@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +27,8 @@ import com.squareup.okhttp.Request;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
@@ -125,9 +128,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                     pd = ProgressDialog.show(RegisterActivity.this, "", "正在注册");
 
-                    //Log.v("json11111111111111111", new Gson().toJson(new registerUser(userAccount, userPwd, userId)));
-
-
                     OkHttpUtils
                             .postString()
                             .url(URL)
@@ -140,41 +140,37 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onError(Request request, Exception e) {
                                     pd.dismiss();
-                                    //Log.e("eror11111111111111", "11111111111111111111111111111111111111111");
                                     e.printStackTrace();
                                     Toast.makeText(RegisterActivity.this, "连接失败，请重新注册", Toast.LENGTH_LONG).show();
                                 }
 
                                 @Override
                                 public void onResponse(String s) {
-                                    //Log.v("1111111111111111", s);
-                                    if (s.contains("false")) {
-                                        pd.dismiss();
-                                        Toast.makeText(RegisterActivity.this, "用户已存在", Toast.LENGTH_LONG).show();
-                                    } else {
-                                        pd.dismiss();
-                                        Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_LONG).show();
-
-                                        //Perferencre保存
-                                        //s.replace("\\", "");
-                                        String s2 = "";
-                                        for (int i = 0; i < s.length(); i++) {
-                                            //System.out.println(s.charAt(i));
-                                            if (s.charAt(i) >= '1' && s.charAt(i) <= '9') {
-                                                s2 += s.charAt(i);
-                                            }
+                                    pd.dismiss();
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(s);
+                                        boolean registerStatus = jsonObject.optBoolean("registerStatus");
+                                        int accountId = jsonObject.optInt("accountId");
+                                        String message = jsonObject.optString("message");
+                                        Log.d("RegisterActivity", "" + accountId);
+                                        if (registerStatus) {
+                                            sp = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = sp.edit();
+                                            editor.putInt("accountId", accountId);
+                                            editor.putString("stuNo", userId);
+                                            editor.putString("nickname", userAccount);
+                                            editor.putString("headImageUrl", "");
+                                            editor.putString("PASSWORD", userPwd);
+                                            editor.apply();
+                                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        } else {
+                                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
                                         }
-                                        //Log.v("1111111111111111", s2);
-                                        sp = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-                                        SharedPreferences.Editor editor = sp.edit();
-                                        editor.putInt("accountId", Integer.parseInt(s2));
-                                        editor.putString("stuNo", userId);
-                                        editor.putString("PASSWORD", userPwd);
-                                        editor.apply();
-
-
-                                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                        startActivity(intent);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
                                 }
                             });

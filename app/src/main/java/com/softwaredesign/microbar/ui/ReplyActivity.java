@@ -42,8 +42,8 @@ public class ReplyActivity extends AppCompatActivity {
     private static final int MAKE_REPLY = 0;
     private static final int CREATE_FLOOR = 1;
 
-    private static final String CREATEREPLY = "";
-    private static final String CREATEFLOOR = "";
+    private static final String CREATEREPLY = "createReply";
+    private static final String CREATEFLOOR = "createFloor";
 
     private Toolbar replyToolbar;
     private TextView typeString;
@@ -180,6 +180,7 @@ public class ReplyActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Log.d("ReplyActivity", responseString);
                 // setResult
                 finish();
             }

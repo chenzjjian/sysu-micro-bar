@@ -25,11 +25,11 @@ public class PostUtil {
                 .execute(callback);
     }
 
-    public static void refreshForNew(String url, int lastPostId, Callback callback) {
+    public static void refreshForNew(String url, int firstPostId, Callback callback) {
         OkHttpUtils
                 .post()
                 .url(getAbsoluteUrl(url))
-                .addParams("lastPostId", Integer.toString(lastPostId))
+                .addParams("firstPostId", Integer.toString(firstPostId))
                 .build()
                 .connTimeOut(20000)
                 .execute(callback);
@@ -60,9 +60,7 @@ public class PostUtil {
         StringBuilder sb = new StringBuilder();
         Iterator iter = history.iterator();
         while (iter.hasNext()) {
-            sb.append("[");
-            sb.append(iter.next());
-            sb.append("]");
+            sb.insert(0,"["+iter.next()+"]");
         }
         Log.d("PostUtil", sb.toString());
         OkHttpUtils

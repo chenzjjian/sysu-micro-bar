@@ -2,7 +2,6 @@ package com.softwaredesign.microbar.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -38,6 +37,7 @@ public class PostFragment extends Fragment {
     private static final int UPLOAD_POST = 0;
 
     private static final String GETMORE = "getPostList";
+    private static final String REFRESH = "getPostUpdated";
     private static final String SEARCHPOST = "searchPostList";
     private static final String RECENTLYWATCH = "getRecentPost";
     private static final String GETMYPOST = "getPostByMyself";
@@ -57,6 +57,8 @@ public class PostFragment extends Fragment {
     private int tag;
     private int accountId;
     private POSTTYPE postType;
+
+    private int firstPostId;
 
     private StringCallback callback;
 
@@ -110,6 +112,7 @@ public class PostFragment extends Fragment {
         switch (postType) {
             case HOMEPAGE:
                 PostUtil.lookForMore(GETMORE, 0, callback);
+                firstPostId = posts.get(0).getPostId();
                 break;
             case HISTORY:
                 PostUtil.getHistory(RECENTLYWATCH, myApplication.getRecentlyWatches(), callback);
@@ -167,19 +170,32 @@ public class PostFragment extends Fragment {
 
     public void setListener() {
         //下拉刷新
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //refreshForNew(mList.get(0).getPostId());
-                        mRefreshLayout.setRefreshing(false);
-                    }
-                }, 1000);
-            }
-        });
+        if (postType == POSTTYPE.HOMEPAGE) {
+            mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    PostUtil.refreshForNew(REFRESH, firstPostId, new StringCallback() {
+                        @Override
+                        public void onError(Request request, Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(String response) {
+                            for (int i = 0; i < firstPostId; i++) {
+                                posts.remove(i);
+                            }
+                            List<Post> newPosts = GsonUtil.parseList(response, new TypeToken<List<Post>>() {
+                            }.getType());
+                            posts.addAll(0, newPosts);
+                            firstPostId = posts.get(0).getPostId();
+                            postAdapter.notifyDataSetChanged();
+                            mLoadMoreListView.setLoading(false);
+                        }
+                    });
+                }
+            });
+        }
 
         //上拉加载
         mLoadMoreListView.setOnLoadListener(new LoadMoreListView.OnLoadListener() {

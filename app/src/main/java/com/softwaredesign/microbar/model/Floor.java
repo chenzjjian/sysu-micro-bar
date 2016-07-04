@@ -10,14 +10,14 @@ public class Floor {
     private String nickname;
     private String createTime;
     private String detail;
-    private boolean isReply;
+    private int isReply;
     private String replyWho;
     private String replyFloorId;
 
     public Floor() {
     }
 
-    public Floor(int floorId, String headImageUrl, String nickname, String createTime, String detail, boolean isReply, String replyWho, String replyFloorId) {
+    public Floor(int floorId, String headImageUrl, String nickname, String createTime, String detail, int isReply, String replyWho, String replyFloorId) {
         this.floorId = floorId;
         this.headImageUrl = headImageUrl;
         this.nickname = nickname;
@@ -68,11 +68,11 @@ public class Floor {
         this.detail = detail;
     }
 
-    public boolean isReply() {
+    public int getIsReply() {
         return isReply;
     }
 
-    public void setIsReply(boolean isReply) {
+    public void setIsReply(int isReply) {
         this.isReply = isReply;
     }
 

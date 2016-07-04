@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.softwaredesign.microbar.R;
 import com.softwaredesign.microbar.util.PostUtil;
 import com.squareup.okhttp.Request;
+import com.squareup.picasso.Picasso;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 
@@ -58,9 +59,20 @@ public class MainActivity extends AppCompatActivity {
         sp = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
 
         accountId = sp.getInt("accountId", -1);
-        String stuNo = sp.getString("stuNo", "匿名");
+        String stuNo = sp.getString("stuNo", "");
+        String nickname = sp.getString("nickname", "");
+        String headImageUrl = sp.getString("headImageUrl","");
         String pwd = sp.getString("PASSWORD", "");
-        userName.setText(stuNo);
+        userName.setText(nickname);
+        if (!headImageUrl.isEmpty()) {
+            Picasso.with(this)
+                    .load(headImageUrl)
+                    .placeholder(R.drawable.default_portrait)  //默认(加载前)头像
+                    .error(R.drawable.default_portrait)  //加载失败时的头像
+                    .resizeDimen(R.dimen.portrait_width, R.dimen.portrait_height)
+                    .centerInside()
+                    .into(userPortrait);
+        }
         checkForNew();
     }
 
