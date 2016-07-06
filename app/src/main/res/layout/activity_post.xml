@@ -33,7 +33,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="标题"
-                    android:textSize="24sp" />
+                    style="@style/MyTextView"/>
 
                 <EditText
                     android:id="@+id/postTitle"
@@ -53,7 +53,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="标签"
-                    android:textSize="24sp" />
+                    style="@style/MyTextView" />
 
                 <Spinner
                     android:id="@+id/postTag"
@@ -68,7 +68,8 @@
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:gravity="start|top"
-                android:hint="输入内容" />
+                android:hint="输入内容"
+                style="@style/MyTextView"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

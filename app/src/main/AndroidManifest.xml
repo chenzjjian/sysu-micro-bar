@@ -12,8 +12,14 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".MyApplication">
         <activity android:name=".ui.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.RegisterActivity"
@@ -22,11 +28,6 @@
             android:name=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ToolbarTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".ui.SearchActivity"
@@ -42,9 +43,11 @@
             android:theme="@style/ToolbarTheme" />
         <activity
             android:name=".ui.FloorActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".ui.TestActivity2"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/ToolbarTheme"/>
+        <activity android:name=".ui.ReplyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ToolbarTheme"/>
     </application>
 
 </manifest>

@@ -7,6 +7,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -15,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,17 +40,21 @@ public class FloorAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private Resources mResources;
     private LruCache<String, Bitmap> mCaches;
+    private int postId;
     private int bitmapWidth;
+
+    private Handler mHandler;
 
     public FloorAdapter() {
     }
 
-    public FloorAdapter(Context context, List<Floor> list, int maxWidth) {
+    public FloorAdapter(Context context, List<Floor> list, int maxWidth, int postId) {
         mContext = context;
         mInflater = LayoutInflater.from(mContext);
         floors = list;
         mResources = mContext.getResources();
         bitmapWidth = maxWidth;
+        this.postId = postId;
 
         int maxMemory = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxMemory / 4;
@@ -57,6 +65,10 @@ public class FloorAdapter extends BaseAdapter {
                 //return super.sizeOf(key, value);
             }
         };
+    }
+
+    public void setHandler(Handler handler) {
+        mHandler = handler;
     }
 
     @Override
@@ -83,6 +95,7 @@ public class FloorAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.headPortait = (ImageView) convertView.findViewById(R.id.headPortrait);
             viewHolder.nickName = (TextView) convertView.findViewById(R.id.nickName);
+            viewHolder.reply = (Button) convertView.findViewById(R.id.reply);
             viewHolder.time = (TextView) convertView.findViewById(R.id.time);
             viewHolder.floorContent = (TextView) convertView.findViewById(R.id.floorContent);
             convertView.setTag(viewHolder);
@@ -93,7 +106,7 @@ public class FloorAdapter extends BaseAdapter {
 
         // 加载用户头像
         Picasso.with(mContext)
-                .load(floor.getPortraitUrl())
+                .load(floor.getHeadImageUrl())
                 .placeholder(R.drawable.default_portrait)  //默认(加载前)头像
                 .error(R.drawable.default_portrait)  //加载失败时的头像
                 .resizeDimen(R.dimen.portrait_width, R.dimen.portrait_height)
@@ -101,11 +114,29 @@ public class FloorAdapter extends BaseAdapter {
                 .tag(mContext)
                 .into(viewHolder.headPortait);
 
-        viewHolder.nickName.setText(floor.getUsername());
-        viewHolder.time.setText(floor.getTimestamp());
+        viewHolder.nickName.setText(floor.getNickname());
+        viewHolder.reply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("postId", postId);
+                bundle.putString("nickName", floor.getNickname());
+                bundle.putInt("replyFloorId", floor.getFloorId());
+                Message msg = mHandler.obtainMessage();
+                msg.what = 0;
+                msg.setData(bundle);
+                mHandler.sendMessage(msg);
+            }
+        });
 
+        viewHolder.time.setText(floor.getCreateTime());
+        Log.d("FloorAdapter", ""+floor.getIsReply());
+        if (floor.getIsReply() == 1) {
+            String replyWho = floor.getReplyWho();
+            floor.setDetail("回复 "+replyWho + ":\n" + floor.getDetail());
+        }
         // 异步加载floorContent
-        Spanned spanned = Html.fromHtml(floor.getContent(), new Html.ImageGetter() {
+        Spanned spanned = Html.fromHtml(floor.getDetail(), new Html.ImageGetter() {
             @Override
             public Drawable getDrawable(String source) {
                 LevelListDrawable levelListDrawable = new LevelListDrawable();
@@ -133,7 +164,6 @@ public class FloorAdapter extends BaseAdapter {
                 return levelListDrawable;
             }
         }, null);
-
         viewHolder.floorContent.setText(spanned);
         return convertView;
     }
@@ -183,6 +213,7 @@ public class FloorAdapter extends BaseAdapter {
     static class ViewHolder {
         private ImageView headPortait;
         private TextView nickName;
+        private Button reply;
         private TextView time;
         private TextView floorContent;
     }

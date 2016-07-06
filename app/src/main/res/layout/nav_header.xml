@@ -5,17 +5,16 @@
     android:background="#6690eb">
     <ImageView
         android:id="@+id/userPortrait"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/portrait_width"
+        android:layout_height="@dimen/portrait_height"
         android:layout_gravity="center"
-        android:src="@drawable/doge"/>
+        android:src="@drawable/default_portrait"/>
     <TextView
         android:id="@+id/userName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:gravity="center"
-        android:layout_marginBottom="40dp"
-        android:text="doge"
+        android:layout_marginBottom="20dp"
         android:textSize="24sp"/>
 </FrameLayout>
